@@ -1,0 +1,30 @@
+.header {
+  background-color: #007acc;
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 48px;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 18px;
+  margin: 0;
+  opacity: 0.95;
+  font-weight: 300;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 32px;
+  }
+  
+  .subtitle {
+    font-size: 16px;
+  }
+}

@@ -1,13 +1,10 @@
-function Header({titulo, subtitulo}) {
+import styles from './Header.module.css';
+
+function Header({ titulo = "ElectroApp", subtitulo = "Sistema de gestión" }) {
   return (
-    <header style={{ 
-      backgroundColor: '#007acc', 
-      color: 'white', 
-      padding: '20px', 
-      textAlign: 'center' 
-    }}>
-      <h1>⚡ {titulo}</h1>
-      <p>{subtitulo}</p>
+    <header className={styles.header}>
+      <h1 className={styles.title}>⚡ {titulo}</h1>
+      <p className={styles.subtitle}>{subtitulo}</p>
     </header>
   );
 }

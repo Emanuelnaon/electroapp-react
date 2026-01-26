@@ -3,6 +3,7 @@ import Header from './Header';
 import Footer from './Footer';
 import BenefitCard from './BenefitCard';
 import WaitlistForm from './WaitlistForm';
+import TestSupabase from './TestSupabase'; 
 
 function App() {
   return (
@@ -11,6 +12,8 @@ function App() {
         titulo="ElectroApp" 
         subtitulo="Un sistema de gestión gratis para electricistas."
       />
+      
+      <TestSupabase />
       
       <main className={styles.main}>
         <h2 className={styles.sectionTitle}>

@@ -1,12 +1,11 @@
+import styles from './Footer.module.css';
+
 function Footer() {
   return (
-    <footer style={{ 
-      textAlign: 'center', 
-      padding: '20px', 
-      color: '#516793',
-      marginTop: '40px'
-    }}>
-      <p>© 2026 ElectroApp - Hecho por electricistas, para electricistas</p>
+    <footer className={styles.footer}>
+      <p className={styles.text}>
+        © 2026 ElectroApp - Hecho por electricistas, para electricistas
+      </p>
     </footer>
   );
 }

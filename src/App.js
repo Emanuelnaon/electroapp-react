@@ -3,7 +3,6 @@ import Header from './Header';
 import Footer from './Footer';
 import BenefitCard from './BenefitCard';
 import WaitlistForm from './WaitlistForm';
-import TestSupabase from './TestSupabase'; 
 
 function App() {
   return (
@@ -12,8 +11,6 @@ function App() {
         titulo="ElectroApp" 
         subtitulo="Un sistema de gestión gratis para electricistas."
       />
-      
-      <TestSupabase />
       
       <main className={styles.main}>
         <h2 className={styles.sectionTitle}>
@@ -24,25 +21,25 @@ function App() {
           <BenefitCard 
             emoji="📋"
             titulo="Presupuestos Rápidos"
-            descripcion="Armá presupuestos profesionales en menos de 3 minutos con precios actualizados"
+            descripcion="Armá presupuestos profesionales en menos de 3 minutos"
           />
           
           <BenefitCard 
             emoji="👥"
             titulo="Gestión de Clientes"
-            descripcion="Seguimiento completo de trabajos, pagos y comunicaciones en un solo lugar"
+            descripcion="Seguimiento completo de trabajos y pagos"
           />
           
           <BenefitCard 
             emoji="📱"
             titulo="Acceso Multiplataforma"
-            descripcion="Gestiona tus presupuestos desde cualquier dispositivo: PC, tablet o celular"
+            descripcion="Gestiona desde cualquier dispositivo"
           />
           
           <BenefitCard 
             emoji="🌐"
             titulo="Perfil Público"
-            descripcion="Mostrá tu trabajo con tu perfil público y lista de precios personalizada"
+            descripcion="Mostrá tu trabajo y precios"
           />
         </div>
         

@@ -661,3 +661,28 @@ Landing funcional + Base de datos real
 ✅ Portfolio público en crecimiento
 
 ---
+### Mejora adicional - Validación de email con regex
+
+**Problema detectado:**
+La validación `email.includes('@')` aceptaba `test@test` como válido.
+
+**Solución implementada:**
+```javascript
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if (!emailRegex.test(email)) {
+  // Email inválido
+}
+```
+
+**Qué valida:**
+- ✅ Debe tener texto antes del @
+- ✅ Debe tener @ exactamente una vez
+- ✅ Debe tener dominio después del @
+- ✅ Debe tener punto en el dominio
+- ✅ Debe tener extensión después del punto
+- ❌ No puede tener espacios
+
+**Casos de prueba:**
+- `test@test` → ❌ Rechazado
+- `test@test.com` → ✅ Aceptado

@@ -5,17 +5,22 @@ function WaitlistForm() {
   const [email, setEmail] = useState('');
   const [emails, setEmails] = useState([]);
   const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState(''); // 'success' o 'error'
+  const [messageType, setMessageType] = useState('');
   
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!email || !email.includes('@')) {
-      setMessage('❌ Por favor ingresá un email válido');
+    // Regex para validar email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    // Validación de formato
+    if (!email || !emailRegex.test(email)) {
+      setMessage('❌ Por favor ingresá un email válido (ej: juan@gmail.com)');
       setMessageType('error');
       return;
     }
     
+    // Verificar duplicados
     if (emails.includes(email)) {
       setMessage('📧 Este email ya está en la lista de espera');
       setMessageType('error');
@@ -24,6 +29,7 @@ function WaitlistForm() {
       return;
     }
     
+    // Guardar email
     setEmails([...emails, email]);
     setMessage('✅ ¡Listo! Te avisaremos cuando esté listo');
     setMessageType('success');
@@ -47,6 +53,8 @@ function WaitlistForm() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="tu@email.com"
           className={styles.input}
+          pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+          title="Ingresá un email válido (ej: juan@gmail.com)"
           required
         />
         

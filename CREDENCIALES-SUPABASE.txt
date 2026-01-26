@@ -1,0 +1,23 @@
+===========================================
+CREDENCIALES SUPABASE - ElectroApp
+===========================================
+
+Project URL:
+https://sbhtzojgcgrysxwbkgqa.supabase.co
+
+Anon Key (pública):
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaHR6b2pnY2dyeXN4d2JrZ3FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkzOTk0MjQsImV4cCI6MjA4NDk3NTQyNH0.KuzMjiNdMMPXp0emgBREA2zEh-MePhPdmcGFWElHgCw
+
+
+Service Role Key (secreta - NO USAR EN FRONTEND):
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiaHR6b2pnY2dyeXN4d2JrZ3FhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTM5OTQyNCwiZXhwIjoyMDg0OTc1NDI0fQ.6RH3lkW4U-E8b0pxEtU4HebFcsWvHitZnaRDoRonv7g
+
+Database Password (guardada al crear proyecto):
+b75aUD7pCSuRFZys
+
+===========================================
+NOTAS:
+- Anon Key: Se puede usar en React (frontend)
+- Service Role: NUNCA exponerla, solo en backend
+- Este archivo NO se sube a GitHub
+===========================================

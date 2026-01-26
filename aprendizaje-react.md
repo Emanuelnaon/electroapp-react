@@ -686,3 +686,71 @@ if (!emailRegex.test(email)) {
 **Casos de prueba:**
 - `test@test` → ❌ Rechazado
 - `test@test.com` → ✅ Aceptado
+
+---
+
+## ✅ Lunes completado
+
+### Tabla creada:
+```sql
+waitlist (
+  id BIGINT PRIMARY KEY,
+  created_at TIMESTAMPTZ,
+  email TEXT UNIQUE
+)
+```
+
+### Datos de prueba insertados:
+- test@gmail.com
+- juan@electricista.com  
+- maria@electronica.com.ar
+
+### Restricción UNIQUE verificada:
+✅ Intento de duplicado fue rechazado por la base de datos
+
+### Credenciales obtenidas:
+- ✅ Project URL guardada
+- ✅ Anon Key guardada
+- ✅ Archivo `CREDENCIALES-SUPABASE.txt` creado
+
+### Estado del proyecto:
+Base de datos lista y con datos de prueba.
+Próximo paso: Conectar con React.
+
+---
+
+## Próxima sesión: Martes
+Tema: Instalar Supabase en React y hacer primera query
+```
+
+---
+
+## ✅ CHECKLIST FINAL DEL LUNES
+
+- [ ] Cuenta en Supabase creada
+- [ ] Proyecto `ElectroApp` creado
+- [ ] Tabla `waitlist` creada con 3 columnas
+- [ ] 3 emails de prueba insertados
+- [ ] Restricción UNIQUE probada y funcionando
+- [ ] Project URL copiada
+- [ ] Anon Key copiada
+- [ ] Archivo `CREDENCIALES-SUPABASE.txt` creado
+- [ ] `aprendizaje-supabase.md` actualizado
+
+---
+
+## 🎊 LUNES SEMANA 3 COMPLETADO
+```
+╔════════════════════════════════════════════════╗
+║                                                ║
+║     ✅ LUNES SEMANA 3 COMPLETADO ✅            ║
+║                                                ║
+║  Base de datos PostgreSQL en la nube:         ║
+║  ✓ Proyecto creado en Supabase                ║
+║  ✓ Tabla waitlist con 3 emails                ║
+║  ✓ Restricción UNIQUE funcionando             ║
+║  ✓ Credenciales guardadas                     ║
+║                                                ║
+║  Mañana: Conectar React con Supabase          ║
+║                                                ║
+╚════════════════════════════════════════════════╝

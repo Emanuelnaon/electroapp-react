@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import styles from './WaitlistForm.module.css';
-import { supabase } from './supabaseClient.js';
+import { supabase } from './supabaseClient';
 
 function WaitlistForm() {
   const [email, setEmail] = useState('');

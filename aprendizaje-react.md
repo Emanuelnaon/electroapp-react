@@ -754,3 +754,125 @@ Tema: Instalar Supabase en React y hacer primera query
 ║  Mañana: Conectar React con Supabase          ║
 ║                                                ║
 ╚════════════════════════════════════════════════╝
+
+---
+
+## Día 3 - Miércoles
+
+### Fecha: [HOY]
+### Tiempo invertido: ~2 horas
+
+---
+
+## Lo que hice hoy:
+
+### 1. Modifiqué WaitlistForm para usar Supabase
+
+**Antes (localStorage):**
+```javascript
+localStorage.setItem('email_' + Date.now(), email);
+```
+
+**Después (Supabase):**
+```javascript
+const { data, error } = await supabase
+  .from('waitlist')
+  .insert([{ email: email }]);
+```
+
+### 2. Implementé contador desde Supabase
+```javascript
+const { count } = await supabase
+  .from('waitlist')
+  .select('*', { count: 'exact', head: true });
+```
+
+### 3. Validación automática de duplicados
+Supabase rechaza duplicados automáticamente (error code `23505`).
+Ya no necesito validar manualmente en React.
+
+### 4. Estado de loading
+Botón muestra "Enviando..." mientras guarda en la base de datos.
+
+---
+
+## Queries aprendidas:
+
+### INSERT (crear registro)
+```javascript
+const { data, error } = await supabase
+  .from('tabla')
+  .insert([{ columna: valor }])
+  .select();  // ← Devuelve el registro creado
+```
+
+### COUNT (contar registros)
+```javascript
+const { count, error } = await supabase
+  .from('tabla')
+  .select('*', { count: 'exact', head: true });
+// head: true = solo el count, no los datos
+```
+
+---
+
+## Manejo de errores de Supabase:
+
+| Error Code | Significado | Cómo manejarlo |
+|------------|-------------|----------------|
+| `23505` | Duplicate key (UNIQUE violation) | Mostrar "Email ya existe" |
+| `42P01` | Table doesn't exist | Verificar nombre de tabla |
+| `PGRST116` | No rows returned | Normal cuando no hay datos |
+
+---
+
+## Flujo completo del formulario:
+```
+1. Usuario escribe email
+2. React valida formato (regex)
+3. Submit → setLoading(true)
+4. Supabase.insert()
+5. Supabase valida duplicados
+6. Si OK: guarda en PostgreSQL
+7. React recibe respuesta
+8. Actualiza UI (contador + mensaje)
+9. Limpia input
+```
+
+---
+
+## Diferencias clave:
+
+### localStorage (Semana 2):
+- Validación manual de duplicados
+- Datos solo locales
+- Sincronización manual del contador
+
+### Supabase (Semana 3):
+- Validación automática (constraint UNIQUE)
+- Datos en la nube
+- Contador sincronizado con DB real
+
+---
+
+## Archivos modificados hoy:
+
+- ✅ `src/WaitlistForm.js` (migrado a Supabase)
+- ✅ `src/App.js` (removido TestSupabase)
+- ❌ `src/TestSupabase.js` (borrado)
+
+---
+
+## Testing realizado:
+
+✅ Email nuevo se guarda correctamente
+✅ Duplicados son rechazados
+✅ Contador se actualiza en tiempo real
+✅ Estado loading funciona
+✅ Validación de formato sigue funcionando
+✅ Datos persisten en Supabase
+
+---
+
+## Próxima sesión: Jueves
+Tema: Dashboard para ver todos los emails + Exportar a CSV

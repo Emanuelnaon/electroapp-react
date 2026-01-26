@@ -1,41 +1,79 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './WaitlistForm.module.css';
+import { supabase } from './supabaseClient';
 
 function WaitlistForm() {
   const [email, setEmail] = useState('');
-  const [emails, setEmails] = useState([]);
+  const [emailCount, setEmailCount] = useState(0);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
+  const [loading, setLoading] = useState(false);
   
-  const handleSubmit = (e) => {
+  // Contar emails al cargar
+  useEffect(() => {
+    async function fetchEmailCount() {
+      try {
+        const { count, error } = await supabase
+          .from('waitlist')
+          .select('*', { count: 'exact', head: true });
+        
+        if (error) throw error;
+        
+        setEmailCount(count || 0);
+      } catch (error) {
+        console.error('Error al contar emails:', error);
+      }
+    }
+    
+    fetchEmailCount();
+  }, []);
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Regex para validar email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     
-    // Validación de formato
     if (!email || !emailRegex.test(email)) {
       setMessage('❌ Por favor ingresá un email válido (ej: juan@gmail.com)');
       setMessageType('error');
       return;
     }
     
-    // Verificar duplicados
-    if (emails.includes(email)) {
-      setMessage('📧 Este email ya está en la lista de espera');
-      setMessageType('error');
+    setLoading(true);
+    
+    try {
+      const { data, error } = await supabase
+        .from('waitlist')
+        .insert([{ email: email }])
+        .select();
+      
+      if (error) {
+        if (error.code === '23505') {
+          setMessage('📧 Este email ya está en la lista de espera');
+          setMessageType('error');
+        } else {
+          setMessage('❌ Error al guardar. Intentá de nuevo.');
+          setMessageType('error');
+          console.error('Error de Supabase:', error);
+        }
+        return;
+      }
+      
       setEmail('');
+      setMessage('✅ ¡Listo! Te avisaremos cuando esté listo');
+      setMessageType('success');
+      setEmailCount(emailCount + 1);
+      
+      console.log('✅ Email guardado:', data);
+      
+    } catch (error) {
+      setMessage('❌ Error inesperado. Intentá de nuevo.');
+      setMessageType('error');
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
       setTimeout(() => setMessage(''), 3000);
-      return;
     }
-    
-    // Guardar email
-    setEmails([...emails, email]);
-    setMessage('✅ ¡Listo! Te avisaremos cuando esté listo');
-    setMessageType('success');
-    setEmail('');
-    
-    setTimeout(() => setMessage(''), 3000);
   };
   
   return (
@@ -49,6 +87,8 @@ function WaitlistForm() {
       <form onSubmit={handleSubmit} className={styles.form}>
         <input 
           type="email"
+          id="email"
+          name="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="tu@email.com"
@@ -56,10 +96,15 @@ function WaitlistForm() {
           pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
           title="Ingresá un email válido (ej: juan@gmail.com)"
           required
+          disabled={loading}
         />
         
-        <button type="submit" className={styles.button}>
-          Unirme a la lista
+        <button 
+          type="submit" 
+          className={styles.button}
+          disabled={loading}
+        >
+          {loading ? 'Enviando...' : 'Unirme a la lista'}
         </button>
       </form>
       
@@ -72,7 +117,7 @@ function WaitlistForm() {
       )}
       
       <p className={styles.counter}>
-        {emails.length} electricista{emails.length !== 1 ? 's' : ''} ya se anotaron
+        {emailCount} electricista{emailCount !== 1 ? 's' : ''} ya se anotaron
       </p>
     </div>
   );

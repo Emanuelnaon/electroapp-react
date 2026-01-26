@@ -10,23 +10,36 @@ function WaitlistForm() {
   const [loading, setLoading] = useState(false);
   
   // Contar emails al cargar
-  useEffect(() => {
-    async function fetchEmailCount() {
-      try {
-        const { count, error } = await supabase
-          .from('waitlist')
-          .select('*', { count: 'exact', head: true });
-        
-        if (error) throw error;
-        
-        setEmailCount(count || 0);
-      } catch (error) {
-        console.error('Error al contar emails:', error);
+useEffect(() => {
+  async function fetchEmailCount() {
+    try {
+      console.log('🔍 Fetching emails...');
+      
+      // En vez de count, traer todos los datos
+      const { data, error } = await supabase
+        .from('waitlist')
+        .select('id, email, created_at');
+      
+      console.log('📊 Datos recibidos:', data);
+      console.log('❌ Error:', error);
+      
+      if (error) {
+        console.error('Error de Supabase:', error);
+        return;
       }
+      
+      // Contar manualmente
+      const count = data ? data.length : 0;
+      console.log('✅ Total de emails:', count);
+      
+      setEmailCount(count);
+    } catch (error) {
+      console.error('Error catch:', error);
     }
-    
-    fetchEmailCount();
-  }, []);
+  }
+  
+  fetchEmailCount();
+}, []);
   
   const handleSubmit = async (e) => {
     e.preventDefault();

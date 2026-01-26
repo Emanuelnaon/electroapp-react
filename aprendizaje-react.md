@@ -473,3 +473,191 @@ Tu `localhost:3000` debería tener:
 │                                       │
 ├──────────────────────────────────────┤
 │ © 2026 ElectroApp...                 │ ← Footer
+
+---
+
+## Día 5 - Viernes
+
+### Fecha: [HOY]
+### Tiempo invertido: ~1 hora
+
+---
+
+## Lo que hice hoy:
+
+### 1. Git y GitHub
+- Inicialicé Git en el proyecto React
+- Creé `.gitignore` para excluir `node_modules`
+- Hice el primer commit
+- Creé repositorio `electroapp-react` en GitHub
+- Pusheé el código
+
+### 2. Deploy en Vercel
+- Conecté GitHub con Vercel
+- Deployé automáticamente
+- Verifiqué que funciona en producción
+
+### 3. URLs finales
+
+**Versión HTML (Semana 1):**
+https://electroapp-landing.vercel.app
+
+**Versión React (Semana 2):**
+https://electroapp-react-[mi-url].vercel.app
+
+---
+
+## 🎉 SEMANA 2 COMPLETADA
+
+### Proyecto final:
+✅ Landing page funcional en React
+✅ 6 componentes modulares (Header, Footer, BenefitCard, WaitlistForm, App, index)
+✅ CSS Modules para estilos
+✅ Formulario con validación
+✅ Responsive design
+✅ Deployed en Vercel
+✅ Código en GitHub
+
+---
+
+## Estadísticas de la Semana 2:
+
+| Métrica | Valor |
+|---------|-------|
+| **Días de trabajo** | 5 |
+| **Horas invertidas** | ~8.5 horas |
+| **Componentes creados** | 5 (Header, Footer, BenefitCard, WaitlistForm, Counter) |
+| **Archivos CSS Modules** | 5 |
+| **Líneas de código** | ~400 |
+| **Commits** | 1 (por ahora) |
+| **Conceptos aprendidos** | 10+ |
+
+---
+
+## Conceptos dominados:
+
+### React Fundamentals:
+✅ Componentes funcionales
+✅ JSX
+✅ Props (pasar datos)
+✅ useState (estado)
+✅ Eventos (onClick, onChange, onSubmit)
+✅ Renderizado condicional
+✅ Controlled inputs
+✅ CSS Modules
+
+### Herramientas:
+✅ create-react-app
+✅ npm start
+✅ Hot reload
+✅ React DevTools (básico)
+
+### Buenas prácticas:
+✅ Separación de componentes
+✅ Props con destructuring
+✅ Nombres descriptivos
+✅ Estilos modulares
+✅ Estructura de carpetas organizada
+
+---
+
+## Comparación: Semana 1 vs Semana 2
+
+### Semana 1 (HTML):
+- 1 archivo HTML
+- 1 archivo CSS
+- 1 archivo JS
+- ~250 líneas total
+- Todo mezclado
+
+### Semana 2 (React):
+- 12 archivos organizados
+- ~400 líneas (pero más mantenibles)
+- Componentes reutilizables
+- Arquitectura escalable
+
+**Resultado:** Misma funcionalidad, mejor arquitectura.
+
+---
+
+## Lo más difícil de la semana:
+- Entender el flujo de datos (props vs state)
+- Recordar usar `set` para cambiar el estado
+- No mutar arrays directamente
+- Sintaxis de CSS Modules
+
+## Lo más satisfactorio:
+- Ver el formulario funcionando con useState
+- Eliminar todos los estilos inline
+- El efecto hover en las tarjetas
+- Deploy automático funcionando
+
+---
+
+## Errores que cometí y aprendí:
+
+1. **Intentar modificar props** 
+   - Props son read-only
+   - Solución: Usar estado si necesito cambiar algo
+
+2. **Mutar el estado directamente**
+```jsx
+   // ❌ MAL
+   emails.push(newEmail);
+   
+   // ✅ BIEN
+   setEmails([...emails, newEmail]);
+```
+
+3. **Olvidar preventDefault**
+   - El formulario recargaba la página
+   - Solución: `e.preventDefault()` siempre en onSubmit
+
+4. **Estilos inline desorganizados**
+   - Difíciles de mantener
+   - Solución: CSS Modules
+
+---
+
+## Próximos pasos (Semana 3):
+
+**Objetivo:** Conectar React con Supabase
+
+**Temas:**
+- Crear proyecto en Supabase
+- Diseñar schema de base de datos
+- Integrar Supabase con React
+- Guardar emails reales en DB (no localStorage)
+- Autenticación básica (si da el tiempo)
+
+**Resultado esperado:**
+Landing funcional + Base de datos real
+
+---
+
+## Reflexión personal:
+
+### ¿Cómo me siento después de Semana 2?
+
+[Escribí aquí tu reflexión]
+
+### ¿Qué fue lo que más me gustó de React?
+
+[Escribí aquí]
+
+### ¿Sigo motivado para Semana 3?
+
+[1-10 y por qué]
+
+---
+
+## 🏆 Logros desbloqueados:
+
+✅ Primera app en React deployada
+✅ Dominio de componentes y props
+✅ Manejo de estado con useState
+✅ CSS Modules implementados
+✅ Git workflow establecido
+✅ Portfolio público en crecimiento
+
+---

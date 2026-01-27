@@ -876,3 +876,226 @@ const { count, error } = await supabase
 
 ## Próxima sesión: Jueves
 Tema: Dashboard para ver todos los emails + Exportar a CSV
+
+---
+
+## 🐛 Bug encontrado y resuelto: RLS
+
+### Problema:
+- Contador mostraba 0 en producción
+- Supabase tenía 3 emails pero queries devolvían []
+- No había errores en consola
+
+### Causa:
+Row Level Security (RLS) estaba habilitado sin policies.
+Por defecto, RLS **bloquea todo** si no hay policies.
+
+### Solución implementada:
+Crear policies para el rol `anon` (usuarios no autenticados):
+```sql
+-- Habilitar RLS (buena práctica)
+ALTER TABLE waitlist ENABLE ROW LEVEL SECURITY;
+
+-- Permitir lectura pública (para el contador)
+CREATE POLICY "Enable read access for all users"
+ON waitlist
+FOR SELECT
+TO anon
+USING (true);
+
+-- Permitir escritura pública (para el formulario)
+CREATE POLICY "Enable insert access for all users"
+ON waitlist
+FOR INSERT
+TO anon
+WITH CHECK (true);
+```
+
+### ¿Por qué esta solución es mejor que deshabilitar RLS?
+
+**Deshabilitar RLS:**
+- ❌ Tabla queda completamente abierta
+- ❌ Difícil agregar seguridad después
+- ❌ No es best practice
+
+**RLS con policies:**
+- ✅ Control granular de permisos
+- ✅ Fácil agregar autenticación después
+- ✅ Best practice de PostgreSQL
+
+### Conceptos aprendidos:
+
+**RLS (Row Level Security):**
+Capa de seguridad que controla acceso a nivel de fila.
+
+**Roles en Supabase:**
+- `anon`: Usuarios no autenticados (usan ANON_KEY)
+- `authenticated`: Usuarios logueados (usan AUTH_TOKEN)
+- `service_role`: Administrador total (usa SERVICE_KEY)
+
+**Policies:**
+Reglas que definen quién puede hacer qué.
+
+**Operaciones:**
+- `SELECT`: Leer
+- `INSERT`: Crear
+- `UPDATE`: Modificar
+- `DELETE`: Borrar
+
+### Plan futuro:
+
+Cuando agregue autenticación (Semana 4-5):
+- Mantener policies `anon` para waitlist (es pública)
+- Agregar policies `authenticated` para presupuestos
+- Agregar policies específicas por usuario (solo ver sus datos)
+
+---
+```
+
+---
+
+## 🎯 Estado actual perfecto
+
+**Tu arquitectura de seguridad:**
+```
+Tabla: waitlist
+├── RLS: ENABLED ✅
+├── Policy 1: anon puede SELECT (leer) ✅
+└── Policy 2: anon puede INSERT (crear) ✅
+
+Resultado:
+- Contador funciona (SELECT)
+- Formulario funciona (INSERT)
+- Base preparada para auth futuro
+```
+
+---
+
+## ✅ Checklist final del miércoles (actualizado)
+
+- [x] WaitlistForm conectado a Supabase
+- [x] useEffect cuenta emails
+- [x] handleSubmit guarda en Supabase
+- [x] Variables de entorno en Vercel
+- [x] RLS habilitado con policies correctas ← **Solución profesional**
+- [x] Funciona en localhost y Vercel
+- [ ] `aprendizaje-supabase.md` actualizado
+
+---
+
+## 🎊 MIÉRCOLES COMPLETADO (Versión mejorada)
+```
+╔════════════════════════════════════════════════╗
+║                                                ║
+║     ✅ MIÉRCOLES SEMANA 3 COMPLETADO ✅        ║
+║                                                ║
+║  Formulario con Supabase + RLS:               ║
+║  ✓ PostgreSQL en producción                   ║
+║  ✓ Row Level Security configurado             ║
+║  ✓ Policies para acceso público                ║
+║  ✓ Best practices implementadas                ║
+║  ✓ Arquitectura escalable                      ║
+║                                                ║
+║  Bonus: Aprendiste seguridad avanzada         ║
+║         antes de lo planeado 🏆                ║
+║                                                ║
+╚════════════════════════════════════════════════╝
+
+---
+
+## Día 4 - Jueves
+
+### Fecha: [HOY]
+### Tiempo invertido: ~2 horas
+
+---
+
+## Lo que construí hoy:
+
+### 1. Dashboard de administración
+Componente completo para visualizar todos los emails de la waitlist.
+
+**Características:**
+- Tabla con todos los emails
+- Fecha de registro formateada
+- Botón copiar al clipboard
+- Filtros por rango de fechas
+- Exportar a CSV
+- Responsive design
+
+### 2. Query SELECT completa
+```javascript
+const { data, error } = await supabase
+  .from('waitlist')
+  .select('*')
+  .order('created_at', { ascending: false });
+```
+
+### 3. Clipboard API
+```javascript
+navigator.clipboard.writeText(email);
+```
+
+### 4. Filtrado de datos en el cliente
+```javascript
+const filtered = emails.filter(item => {
+  const emailDate = new Date(item.created_at);
+  return emailDate >= daysAgo;
+});
+```
+
+### 5. Exportar a CSV
+Generar archivo CSV dinámicamente desde JavaScript.
+
+---
+
+## Conceptos aprendidos:
+
+### ORDER BY en Supabase
+```javascript
+.order('columna', { ascending: false })  // DESC
+.order('columna', { ascending: true })   // ASC
+```
+
+### Formateo de fechas en JavaScript
+```javascript
+new Date(dateString).toLocaleDateString('es-AR', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric'
+});
+```
+
+### Clipboard API (copiar al portapapeles)
+```javascript
+navigator.clipboard.writeText(texto);
+```
+
+### Crear y descargar archivos CSV
+```javascript
+const blob = new Blob([csvContent], { type: 'text/csv' });
+const url = URL.createObjectURL(blob);
+// Crear link temporal y hacer click programáticamente
+```
+
+---
+
+## Componentes creados:
+
+- `EmailDashboard.js` (componente principal)
+- `EmailDashboard.module.css` (estilos)
+
+---
+
+## Mejoras futuras (Semana 4-5):
+
+- [ ] Actualización en tiempo real (Supabase Realtime)
+- [ ] Paginación (para miles de emails)
+- [ ] Búsqueda por email
+- [ ] Botón para borrar emails
+- [ ] Proteger dashboard con autenticación
+
+---
+
+## Próxima sesión: Viernes
+Tema: Deploy final + Commit & Push + Cierre de Semana 3

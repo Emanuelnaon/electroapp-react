@@ -3,6 +3,7 @@ import Header from './Header';
 import Footer from './Footer';
 import BenefitCard from './BenefitCard';
 import WaitlistForm from './WaitlistForm';
+import EmailDashboard from './EmailDashboard';
 
 function App() {
   return (
@@ -44,6 +45,8 @@ function App() {
         </div>
         
         <WaitlistForm />
+
+        <EmailDashboard />
       </main>
       
       <Footer />

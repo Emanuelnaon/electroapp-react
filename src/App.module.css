@@ -19,6 +19,67 @@
   margin-bottom: 40px;
 }
 
+/* ===== NUEVOS ESTILOS PARA AUTENTICACIÓN ===== */
+
+/* Loading screen */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 20px;
+  color: #4a5568;
+  background-color: #f7fafc;
+}
+
+/* Session bar */
+.sessionBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #f0f4ff;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sessionBar span {
+  font-size: 14px;
+  color: #2d3748;
+}
+
+.sessionBar strong {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.logoutButton {
+  padding: 8px 16px;
+  background-color: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logoutButton:hover {
+  background-color: #5568d3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+}
+
+.logoutButton:active {
+  transform: translateY(0);
+}
+
+/* ===== RESPONSIVE ===== */
+
 @media (max-width: 768px) {
   .main {
     padding: 20px 15px;
@@ -27,5 +88,14 @@
   .sectionTitle {
     font-size: 24px;
     margin-bottom: 25px;
+  }
+
+  .sessionBar {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .logoutButton {
+    width: 100%;
   }
 }

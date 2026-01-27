@@ -14,13 +14,11 @@ function App() {
 
   // Verificar si hay una sesión activa al cargar
   useEffect(() => {
-    // Obtener sesión actual
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    // Escuchar cambios en la autenticación
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
@@ -43,12 +41,6 @@ function App() {
     );
   }
 
-  // Si NO está logueado, mostrar pantalla de login
-  if (!user) {
-    return <LoginScreen onLoginSuccess={(user) => setUser(user)} />;
-  }
-
-  // Si está logueado, mostrar la app normal
   return (
     <div>
       <Header 
@@ -57,13 +49,23 @@ function App() {
       />
       
       <main className={styles.main}>
-        {/* Barra de sesión activa */}
-        <div className={styles.sessionBar}>
-          <span>👤 Sesión activa: <strong>{user.email}</strong></span>
-          <button onClick={handleLogout} className={styles.logoutButton}>
-            Cerrar Sesión
-          </button>
-        </div>
+        {/* BARRA DE ADMIN (solo si está logueado) */}
+        {user && (
+          <div className={styles.sessionBar}>
+            <span>👤 Sesión activa: <strong>{user.email}</strong></span>
+            <button onClick={handleLogout} className={styles.logoutButton}>
+              Cerrar Sesión
+            </button>
+          </div>
+        )}
+
+        {/* BOTÓN DE LOGIN (solo si NO está logueado) */}
+        {!user && (
+          <div className={styles.loginPrompt}>
+            <p>¿Sos administrador?</p>
+            <LoginScreen onLoginSuccess={(user) => setUser(user)} />
+          </div>
+        )}
 
         <h2 className={styles.sectionTitle}>
           ¿Por qué ElectroApp?
@@ -97,8 +99,24 @@ function App() {
         
         <WaitlistForm />
 
-        {/* Dashboard solo visible si está logueado */}
-        <EmailDashboard />
+        {/* DASHBOARD - SOLO VISIBLE PARA ADMINS */}
+        {user && (
+          <>
+            <div className={styles.divider}></div>
+            <div className={styles.adminSection}>
+              <h2 className={styles.adminTitle}>🔒 Sección de Administración</h2>
+              <p className={styles.adminSubtitle}>Solo visible para administradores</p>
+              <EmailDashboard />
+            </div>
+          </>
+        )}
+
+        {/* MENSAJE SI NO ESTÁ LOGUEADO */}
+        {!user && (
+          <div className={styles.publicFooter}>
+            <p>💡 ¿Sos administrador? Iniciá sesión arriba para ver el dashboard de emails.</p>
+          </div>
+        )}
       </main>
       
       <Footer />

@@ -99,3 +99,76 @@
     width: 100%;
   }
 }
+
+/* Divider */
+.divider {
+  height: 2px;
+  background: linear-gradient(to right, transparent, #e2e8f0, transparent);
+  margin: 60px 0 40px 0;
+}
+
+/* Admin section */
+.adminSection {
+  background-color: #f8fafc;
+  border: 2px dashed #cbd5e0;
+  border-radius: 12px;
+  padding: 30px;
+  margin-top: 20px;
+}
+
+.adminTitle {
+  color: #2d3748;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.adminSubtitle {
+  color: #718096;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Login prompt */
+.loginPrompt {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+  text-align: center;
+  color: white;
+}
+
+.loginPrompt p {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+/* Public footer */
+.publicFooter {
+  background-color: #edf2f7;
+  border: 2px solid #cbd5e0;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.publicFooter p {
+  color: #4a5568;
+  font-size: 14px;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .adminSection {
+    padding: 20px 15px;
+  }
+
+  .adminTitle {
+    font-size: 22px;
+  }
+}

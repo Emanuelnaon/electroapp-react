@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { supabase } from './supabaseClient';
 import styles from './LoginScreen.module.css';
 
-function LoginScreen({ onLoginSuccess }) {
+function LoginScreen({ onLoginSuccess, inline = false }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,6 @@ function LoginScreen({ onLoginSuccess }) {
 
       console.log('✅ Login exitoso:', data.user.email);
       
-      // Callback para notificar al componente padre
       if (onLoginSuccess) {
         onLoginSuccess(data.user);
       }
@@ -40,10 +39,14 @@ function LoginScreen({ onLoginSuccess }) {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={inline ? styles.inlineContainer : styles.container}>
       <div className={styles.loginBox}>
-        <h1 className={styles.title}>⚡ ElectroApp Admin</h1>
-        <p className={styles.subtitle}>Iniciar sesión</p>
+        {!inline && (
+          <>
+            <h1 className={styles.title}>⚡ ElectroApp Admin</h1>
+            <p className={styles.subtitle}>Iniciar sesión</p>
+          </>
+        )}
 
         <form onSubmit={handleLogin} className={styles.form}>
           <div className={styles.inputGroup}>
@@ -91,9 +94,11 @@ function LoginScreen({ onLoginSuccess }) {
           </button>
         </form>
 
-        <p className={styles.footer}>
-          Solo para administradores de ElectroApp
-        </p>
+        {!inline && (
+          <p className={styles.footer}>
+            Solo para administradores de ElectroApp
+          </p>
+        )}
       </div>
     </div>
   );

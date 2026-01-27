@@ -7,6 +7,9 @@ function EmailDashboard() {
   const [loading, setLoading] = useState(true);
   const [filterDays, setFilterDays] = useState('all');
   const [copiedId, setCopiedId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const emailsPerPage = 10;
 
   // Función para cargar emails
   const fetchEmails = async () => {
@@ -26,13 +29,13 @@ function EmailDashboard() {
   useEffect(() => {
     fetchEmails();
 
-    // 🆕 SUBSCRIPTION A CAMBIOS EN TIEMPO REAL
+    // Subscription a cambios en tiempo real
     const channel = supabase
       .channel('dashboard-changes')
       .on(
         'postgres_changes',
         {
-          event: '*', // Escucha INSERT, UPDATE, DELETE
+          event: '*',
           schema: 'public',
           table: 'waitlist'
         },
@@ -40,15 +43,12 @@ function EmailDashboard() {
           console.log('🔴 Cambio detectado:', payload);
 
           if (payload.eventType === 'INSERT') {
-            // Agregar nuevo email al inicio de la lista
             setEmails(prevEmails => [payload.new, ...prevEmails]);
           } else if (payload.eventType === 'DELETE') {
-            // Remover email de la lista
             setEmails(prevEmails => 
               prevEmails.filter(email => email.id !== payload.old.id)
             );
           } else if (payload.eventType === 'UPDATE') {
-            // Actualizar email en la lista
             setEmails(prevEmails =>
               prevEmails.map(email =>
                 email.id === payload.new.id ? payload.new : email
@@ -59,22 +59,49 @@ function EmailDashboard() {
       )
       .subscribe();
 
-    // Cleanup
     return () => {
       supabase.removeChannel(channel);
     };
   }, []);
 
-  // Filtrado de emails
-  const filteredEmails = emails.filter(item => {
-    if (filterDays === 'all') return true;
+  // Filtrado por fecha
+  const filterByDate = (items) => {
+    if (filterDays === 'all') return items;
 
-    const emailDate = new Date(item.created_at);
     const daysAgo = new Date();
     daysAgo.setDate(daysAgo.getDate() - parseInt(filterDays));
 
-    return emailDate >= daysAgo;
-  });
+    return items.filter(item => {
+      const emailDate = new Date(item.created_at);
+      return emailDate >= daysAgo;
+    });
+  };
+
+  // Filtrado por búsqueda
+  const filterBySearch = (items) => {
+    if (!searchTerm) return items;
+    
+    return items.filter(item =>
+      item.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
+  // Aplicar todos los filtros
+  const filteredEmails = filterBySearch(filterByDate(emails));
+
+  // Paginación
+  const indexOfLastEmail = currentPage * emailsPerPage;
+  const indexOfFirstEmail = indexOfLastEmail - emailsPerPage;
+  const currentEmails = filteredEmails.slice(indexOfFirstEmail, indexOfLastEmail);
+  const totalPages = Math.ceil(filteredEmails.length / emailsPerPage);
+
+  // Cambiar página
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Resetear a página 1 cuando cambian los filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterDays, searchTerm]);
 
   // Formatear fecha
   const formatDate = (dateString) => {
@@ -95,6 +122,32 @@ function EmailDashboard() {
       setTimeout(() => setCopiedId(null), 2000);
     } catch (err) {
       console.error('Error al copiar:', err);
+    }
+  };
+
+  // Eliminar email
+  const handleDelete = async (id, email) => {
+    const confirmDelete = window.confirm(
+      `¿Estás seguro de eliminar "${email}"?\n\nEsta acción no se puede deshacer.`
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('waitlist')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        alert('Error al eliminar. Intenta de nuevo.');
+        console.error(error);
+      } else {
+        console.log('✅ Email eliminado:', email);
+      }
+    } catch (err) {
+      console.error('Error:', err);
+      alert('Error al eliminar.');
     }
   };
 
@@ -148,6 +201,26 @@ function EmailDashboard() {
         </div>
       </div>
 
+      {/* Barra de búsqueda */}
+      <div className={styles.searchBar}>
+        <input
+          type="text"
+          placeholder="🔍 Buscar por email..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className={styles.searchInput}
+        />
+        {searchTerm && (
+          <button
+            onClick={() => setSearchTerm('')}
+            className={styles.clearButton}
+          >
+            ✕
+          </button>
+        )}
+      </div>
+
+      {/* Filtros por fecha */}
       <div className={styles.filters}>
         <button
           onClick={() => setFilterDays('all')}
@@ -171,36 +244,74 @@ function EmailDashboard() {
 
       {filteredEmails.length === 0 ? (
         <div className={styles.empty}>
-          No hay emails en este rango de fechas
+          {searchTerm 
+            ? `No se encontraron emails con "${searchTerm}"`
+            : 'No hay emails en este rango de fechas'
+          }
         </div>
       ) : (
-        <div className={styles.tableContainer}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th>Fecha de Registro</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredEmails.map((item) => (
-                <tr key={item.id}>
-                  <td className={styles.emailCell}>{item.email}</td>
-                  <td>{formatDate(item.created_at)}</td>
-                  <td>
-                    <button
-                      onClick={() => copyToClipboard(item.email, item.id)}
-                      className={styles.copyButton}
-                    >
-                      {copiedId === item.id ? '✅ Copiado' : '📋 Copiar'}
-                    </button>
-                  </td>
+        <>
+          <div className={styles.tableContainer}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Fecha de Registro</th>
+                  <th>Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {currentEmails.map((item) => (
+                  <tr key={item.id}>
+                    <td className={styles.emailCell}>{item.email}</td>
+                    <td>{formatDate(item.created_at)}</td>
+                    <td className={styles.actionsCell}>
+                      <button
+                        onClick={() => copyToClipboard(item.email, item.id)}
+                        className={styles.copyButton}
+                        title="Copiar email"
+                      >
+                        {copiedId === item.id ? '✅' : '📋'}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.id, item.email)}
+                        className={styles.deleteButton}
+                        title="Eliminar email"
+                      >
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Paginación */}
+          {totalPages > 1 && (
+            <div className={styles.pagination}>
+              <button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={styles.pageButton}
+              >
+                ← Anterior
+              </button>
+
+              <span className={styles.pageInfo}>
+                Página {currentPage} de {totalPages}
+              </span>
+
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={styles.pageButton}
+              >
+                Siguiente →
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -4,135 +4,128 @@ import { supabase } from './supabaseClient';
 
 function WaitlistForm() {
   const [email, setEmail] = useState('');
-  const [emailCount, setEmailCount] = useState(0);
-  const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState('');
   const [loading, setLoading] = useState(false);
-  
-  // Contar emails al cargar
-useEffect(() => {
-  async function fetchEmailCount() {
-    try {
-      console.log('🔍 Fetching emails...');
-      
-      // En vez de count, traer todos los datos
-      const { data, error } = await supabase
-        .from('waitlist')
-        .select('id, email, created_at');
-      
-      console.log('📊 Datos recibidos:', data);
-      console.log('❌ Error:', error);
-      
-      if (error) {
-        console.error('Error de Supabase:', error);
-        return;
-      }
-      
-      // Contar manualmente
-      const count = data ? data.length : 0;
-      console.log('✅ Total de emails:', count);
-      
-      setEmailCount(count);
-    } catch (error) {
-      console.error('Error catch:', error);
+  const [success, setSuccess] = useState(false);
+  const [count, setCount] = useState(0);
+
+  // Función para obtener el contador
+  const fetchCount = async () => {
+    const { count: currentCount, error } = await supabase
+      .from('waitlist')
+      .select('*', { count: 'exact', head: true });
+
+    if (!error) {
+      setCount(currentCount || 0);
     }
-  }
-  
-  fetchEmailCount();
-}, []);
-  
+  };
+
+  // useEffect inicial
+  useEffect(() => {
+    fetchCount();
+
+    // 🆕 SUBSCRIPTION A CAMBIOS EN TIEMPO REAL
+    const channel = supabase
+      .channel('waitlist-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'waitlist'
+        },
+        (payload) => {
+          console.log('🔴 Nuevo email registrado:', payload.new.email);
+          
+          // Actualizar contador automáticamente
+          setCount(prevCount => prevCount + 1);
+          
+          // Opcional: Mostrar notificación
+          if (Notification.permission === 'granted') {
+            new Notification('ElectroApp', {
+              body: `Nuevo registro: ${payload.new.email}`,
+              icon: '/favicon.ico'
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    // Cleanup: desuscribirse cuando el componente se desmonte
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
-    if (!email || !emailRegex.test(email)) {
-      setMessage('❌ Por favor ingresá un email válido (ej: juan@gmail.com)');
-      setMessageType('error');
-      return;
-    }
-    
     setLoading(true);
-    
+    setSuccess(false);
+
     try {
       const { data, error } = await supabase
         .from('waitlist')
         .insert([{ email: email }])
         .select();
-      
+
       if (error) {
         if (error.code === '23505') {
-          setMessage('📧 Este email ya está en la lista de espera');
-          setMessageType('error');
+          alert('Este email ya está registrado');
         } else {
-          setMessage('❌ Error al guardar. Intentá de nuevo.');
-          setMessageType('error');
-          console.error('Error de Supabase:', error);
+          alert('Error al guardar. Intenta de nuevo.');
         }
         return;
       }
-      
+
+      setSuccess(true);
       setEmail('');
-      setMessage('✅ ¡Listo! Te avisaremos cuando esté listo');
-      setMessageType('success');
-      setEmailCount(emailCount + 1);
       
-      console.log('✅ Email guardado:', data);
-      
+      // Ya no necesitamos actualizar el count manualmente
+      // El subscription lo hace automáticamente
+
+      setTimeout(() => setSuccess(false), 3000);
+
     } catch (error) {
-      setMessage('❌ Error inesperado. Intentá de nuevo.');
-      setMessageType('error');
       console.error('Error:', error);
+      alert('Error al guardar. Intenta de nuevo.');
     } finally {
       setLoading(false);
-      setTimeout(() => setMessage(''), 3000);
     }
   };
-  
+
   return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>Próximamente</h2>
-      
-      <p className={styles.description}>
-        Dejá tu email para ser de los primeros en probarlo:
-      </p>
-      
+    <section className={styles.waitlistSection}>
+      <h2>Próximamente</h2>
+      <p>Dejá tu email para ser de los primeros en probarlo:</p>
+
       <form onSubmit={handleSubmit} className={styles.form}>
-        <input 
+        <input
           type="email"
-          id="email"
-          name="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="tu@email.com"
-          className={styles.input}
-          pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
-          title="Ingresá un email válido (ej: juan@gmail.com)"
           required
           disabled={loading}
+          className={styles.input}
         />
-        
         <button 
           type="submit" 
-          className={styles.button}
           disabled={loading}
+          className={styles.button}
         >
-          {loading ? 'Enviando...' : 'Unirme a la lista'}
+          {loading ? 'Guardando...' : 'Unirme a la lista de espera'}
         </button>
       </form>
-      
-      {message && (
-        <div className={`${styles.message} ${
-          messageType === 'success' ? styles.messageSuccess : styles.messageError
-        }`}>
-          {message}
+
+      {success && (
+        <div className={styles.success}>
+          ✅ ¡Listo! Te avisaremos cuando esté disponible.
         </div>
       )}
-      
+
       <p className={styles.counter}>
-        {emailCount} electricista{emailCount !== 1 ? 's' : ''} ya se anotaron
+        <strong>{count}</strong> electricistas ya se anotaron
       </p>
-    </div>
+    </section>
   );
 }
 

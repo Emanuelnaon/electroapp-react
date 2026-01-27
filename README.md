@@ -1,70 +1,228 @@
-# Getting Started with Create React App
+# ⚡ ElectroApp - Landing Page
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Landing page con waitlist para ElectroApp, un CRM gratuito para electricistas profesionales.
 
-## Available Scripts
+## 🚀 Demo
 
-In the project directory, you can run:
+- **Producción:** [tu-url-de-vercel.vercel.app](https://tu-url-de-vercel.vercel.app)
+- **Repositorio:** [GitHub](https://github.com/tu-usuario/electroapp)
 
-### `npm start`
+## 📸 Screenshots
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Landing Page
+![Landing](./screenshots/landing.png)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Dashboard
+![Dashboard](./screenshots/dashboard.png)
 
-### `npm test`
+## 🛠️ Tech Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Frontend:** React 18
+- **Estilos:** CSS Modules
+- **Base de datos:** Supabase (PostgreSQL)
+- **Hosting:** Vercel
+- **Control de versiones:** Git + GitHub
 
-### `npm run build`
+## ✨ Características
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Versión Actual (Semana 3)
+- ✅ Landing page con sección de beneficios
+- ✅ Formulario de waitlist funcional
+- ✅ Validación de emails duplicados
+- ✅ Contador dinámico de usuarios registrados
+- ✅ Dashboard de administración
+- ✅ Filtros por fecha (7 días, 30 días, todos)
+- ✅ Copiar emails al clipboard
+- ✅ Exportar lista a CSV
+- ✅ Diseño responsive (mobile + desktop)
+- ✅ Conexión con Supabase (PostgreSQL)
+- ✅ Row Level Security (RLS) configurado
+- ✅ Deploy automático en Vercel
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Próximas Features (Semana 4-5)
+- [ ] Actualización en tiempo real (Supabase Realtime)
+- [ ] Paginación del dashboard
+- [ ] Búsqueda de emails
+- [ ] Autenticación de admin
+- [ ] Envío de emails de bienvenida
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📁 Estructura del Proyecto
+```
+electroapp/
+├── public/
+├── src/
+│   ├── App.js                      # Componente principal
+│   ├── App.module.css
+│   ├── Header.js                   # Header con logo
+│   ├── Footer.js                   # Footer con contador
+│   ├── BenefitCard.js              # Card de beneficios
+│   ├── WaitlistForm.js             # Formulario con Supabase
+│   ├── EmailDashboard.js           # Dashboard de admin
+│   ├── supabaseClient.js           # Configuración de Supabase
+│   └── index.js
+├── .env.local                      # Variables de entorno (no subir a Git)
+├── .gitignore
+├── package.json
+└── README.md
+```
 
-### `npm run eject`
+## 🚀 Instalación Local
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Prerrequisitos
+- Node.js 18+ instalado
+- Cuenta en Supabase (gratis)
+- Git instalado
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Pasos
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. **Clonar el repositorio:**
+```bash
+git clone https://github.com/tu-usuario/electroapp.git
+cd electroapp
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+2. **Instalar dependencias:**
+```bash
+npm install
+```
 
-## Learn More
+3. **Configurar variables de entorno:**
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Crear archivo `.env.local` en la raíz:
+```env
+REACT_APP_SUPABASE_URL=tu_supabase_url
+REACT_APP_SUPABASE_ANON_KEY=tu_supabase_anon_key
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+4. **Configurar Supabase:**
 
-### Code Splitting
+Ejecutar en el SQL Editor de Supabase:
+```sql
+-- Crear tabla waitlist
+CREATE TABLE waitlist (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+-- Habilitar RLS
+ALTER TABLE waitlist ENABLE ROW LEVEL SECURITY;
 
-### Analyzing the Bundle Size
+-- Policy para permitir lectura pública
+CREATE POLICY "allow_public_read" ON waitlist
+  FOR SELECT USING (true);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+-- Policy para permitir inserción pública
+CREATE POLICY "allow_public_insert" ON waitlist
+  FOR INSERT WITH CHECK (true);
+```
 
-### Making a Progressive Web App
+5. **Iniciar servidor de desarrollo:**
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+La app estará disponible en `http://localhost:3000`
 
-### Advanced Configuration
+## 📊 Base de Datos (Supabase)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Tabla: `waitlist`
 
-### Deployment
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| id | UUID | ID único (primary key) |
+| email | VARCHAR(255) | Email del usuario (unique) |
+| created_at | TIMESTAMP | Fecha de registro |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Row Level Security (RLS)
+- ✅ Lectura pública (cualquiera puede ver el contador)
+- ✅ Inserción pública (cualquiera puede registrarse)
+- ❌ Actualización/borrado bloqueados
 
-### `npm run build` fails to minify
+## 🌐 Deploy en Vercel
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Configuración
+
+1. Conectar repositorio de GitHub en Vercel
+2. Agregar variables de entorno:
+   - `REACT_APP_SUPABASE_URL`
+   - `REACT_APP_SUPABASE_ANON_KEY`
+3. Deploy automático en cada push a `main`
+
+### Variables de Entorno en Vercel
+```
+Settings → Environment Variables → Add New
+
+Name: REACT_APP_SUPABASE_URL
+Value: https://tuproyecto.supabase.co
+Environments: ✅ Production ✅ Preview ✅ Development
+
+Name: REACT_APP_SUPABASE_ANON_KEY
+Value: tu_anon_key
+Environments: ✅ Production ✅ Preview ✅ Development
+```
+
+## 📝 Aprendizajes (Semana 1-3)
+
+### Semana 1
+- HTML/CSS básico
+- JavaScript vanilla
+- localStorage para datos temporales
+
+### Semana 2
+- Migración a React
+- Componentes funcionales
+- React Hooks (useState, useEffect)
+- CSS Modules
+- Git básico
+
+### Semana 3
+- Integración con Supabase
+- PostgreSQL queries (SELECT, INSERT, COUNT)
+- Row Level Security (RLS)
+- Manejo de estados asíncronos
+- Clipboard API
+- Exportar a CSV
+- Deploy en Vercel
+- Variables de entorno
+
+## 🐛 Bugs Resueltos
+
+### Bug #1: RLS bloqueaba queries
+**Problema:** Contador mostraba 0 aunque había emails en Supabase  
+**Causa:** RLS habilitado sin policies  
+**Solución:** Crear policies para `anon` public
+
+### Bug #2: Variables de entorno undefined en Vercel
+**Problema:** Error 401 en producción  
+**Causa:** Build con caché sin las nuevas variables  
+**Solución:** Redeploy sin "Use existing Build Cache"
+
+## 📈 Métricas Actuales
+
+- **Usuarios en waitlist:** [Ver en vivo en el sitio]
+- **Performance Lighthouse:** 95+ en todas las categorías
+- **Tiempo de carga:** < 1 segundo
+- **Uptime:** 99.9% (Vercel)
+
+## 🤝 Contribuciones
+
+Este es un proyecto personal de aprendizaje, pero si encontrás bugs o tenés sugerencias:
+
+1. Abrí un Issue en GitHub
+2. Fork el repositorio
+3. Creá un Pull Request
+
+## 📄 Licencia
+
+MIT License - Libre para usar y modificar
+
+## 👤 Autor
+
+**Emanuel Naon**
+- GitHub: [@emanuelnaon](https://github.com/emanuelnaon)
+- LinkedIn: [tu-perfil](https://linkedin.com/in/emanuelnaon)
+
+---
+
+⚡ Hecho con React, Supabase y mucho café

@@ -1,5 +1,5 @@
 .card {
-  background-color: white;
+  background-color: rgb(243, 236, 255);
   padding: 25px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -26,8 +26,9 @@
 }
 
 .description {
-  color: #4a5568;
+  color: #3b4453;
   line-height: 1.6;
   margin: 0;
   font-size: 15px;
+  font-weight: bold;
 }

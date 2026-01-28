@@ -29,6 +29,7 @@
 }
 
 .input {
+  background-color: rgb(243, 236, 255);
   flex: 1;
   padding: 14px 18px;
   border: 2px solid #e5e7eb;
@@ -45,7 +46,7 @@
 
 .button {
   padding: 14px 28px;
-  background-color: #007acc;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -85,10 +86,17 @@
   border: 1px solid #fecaca;
 }
 
+.description {
+  text-align: left;
+  margin-bottom: 10px;
+  color: black;
+  font-weight: bold;
+}
+
 .counter {
   text-align: center;
   font-weight: 700;
-  color: #007acc;
+  color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   font-size: 18px;
 }
 

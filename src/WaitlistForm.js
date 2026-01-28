@@ -97,7 +97,7 @@ function WaitlistForm() {
   return (
     <section className={styles.waitlistSection}>
       <h2>Próximamente</h2>
-      <p>Dejá tu email para ser de los primeros en probarlo:</p>
+      <p className={styles.description}>Dejá tu email para ser de los primeros en probarlo:</p>
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <input

@@ -2,6 +2,9 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 40px 20px;
+  /*background-color: white; /* ← AGREGAR para que el contenido sea legible */
+  border-radius: 12px; /* Opcional: esquinas redondeadas */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Opcional: sombra */
 }
 
 .sectionTitle {
@@ -158,7 +161,7 @@
 }
 
 .publicFooter p {
-  color: #4a5568;
+  color: #3d4656;
   font-size: 14px;
   margin: 0;
 }
@@ -177,7 +180,7 @@
 .adminPrompt {
   margin-top: 60px;
   padding: 30px;
-  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  background-color: rgb(243, 236, 255);
   border: 2px solid #cbd5e0;
   border-radius: 12px;
   text-align: center;
@@ -186,7 +189,7 @@
 .adminPrompt p {
   font-size: 18px;
   font-weight: 600;
-  color: #2d3748;
+  color: #161b23;
   margin-bottom: 20px;
 }
 

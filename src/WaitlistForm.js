@@ -66,6 +66,8 @@ function WaitlistForm() {
         .from('waitlist')
         .insert([{ email: email }])
         .select();
+     
+      console.log('Data insertada:', data); // ← Usar la variable
 
       if (error) {
         if (error.code === '23505') {

@@ -172,3 +172,41 @@
     font-size: 22px;
   }
 }
+
+/* Admin prompt (para usuarios no logueados) */
+.adminPrompt {
+  margin-top: 60px;
+  padding: 30px;
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  border: 2px solid #cbd5e0;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.adminPrompt p {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 20px;
+}
+
+.adminButton {
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.adminButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.adminButton:active {
+  transform: translateY(0);
+}

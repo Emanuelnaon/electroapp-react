@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import styles from './WaitlistForm.module.css';
 import { supabase } from './supabaseClient';
 
@@ -58,37 +59,42 @@ function WaitlistForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 1. VALIDACIÓN ESTRICTA DE EMAIL 🛡️
+    // Esta "fórmula mágica" verifica: texto + @ + texto + . + texto (de al menos 2 letras)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    if (!emailRegex.test(email)) {
+      toast.error('Por favor, ingresa un email válido (ej: nombre@gmail.com) ⚠️');
+      return; // Detiene la función aquí, no envía nada a Supabase
+    }
     setLoading(true);
     setSuccess(false);
 
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('waitlist')
         .insert([{ email: email }])
         .select();
-     
-      console.log('Data insertada:', data); // ← Usar la variable
 
-      if (error) {
-        if (error.code === '23505') {
-          alert('Este email ya está registrado');
-        } else {
-          alert('Error al guardar. Intenta de nuevo.');
-        }
-        return;
-      }
+    if (error) {
+      if (error.code === '23505') {
+        toast.error('Este email ya está registrado');
+    } else {
+        toast.error('Error al guardar. Intenta de nuevo.');
+     }
+       return;
+    }
 
-      setSuccess(true);
-      setEmail('');
-      
-      // Ya no necesitamos actualizar el count manualmente
-      // El subscription lo hace automáticamente
+setSuccess(true);
+setEmail('');
+toast.success('¡Email registrado exitosamente!');
 
-      setTimeout(() => setSuccess(false), 3000);
+setTimeout(() => setSuccess(false), 3000);
 
     } catch (error) {
       console.error('Error:', error);
-      alert('Error al guardar. Intenta de nuevo.');
+      toast.error('Error al guardar. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }

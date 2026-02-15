@@ -49,6 +49,14 @@
   color: #2d3748;
 }
 
+
+/* 1. Mantenemos la agrupación compacta */
+.passwordGroup, 
+.passwordGroup label,
+.passwordGroup input {
+  cursor: var(--cursor-shhh) ;
+}
+
 .input {
   padding: 12px 16px;
   border: 2px solid #e2e8f0;
@@ -85,7 +93,7 @@
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
-  cursor: pointer;
+  cursor:var(--cursor-electric);
   transition: all 0.2s ease;
   margin-top: 8px;
 }
@@ -104,11 +112,64 @@
   cursor: not-allowed;
 }
 
+/* Botón volver - estilo secundario con animaciones */
+.backButton {
+  width: 100%;
+  padding: 12px 20px;
+  margin-top: 16px;
+  background-color: transparent;
+  color: #667eea;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease; /* Mantiene la suavidad */
+  display: block;
+}
+
+/* EFECTO DE MOVIMIENTO: Se eleva al pasar el mouse */
+.backButton:hover:not(:disabled) {
+  background-color: #f7fafc;
+  border-color: #667eea;
+  transform: translateY(-2px); /* Igual al botón principal */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); /* Sombra más sutil por ser secundario */
+}
+
+/* EFECTO DE CLIC: Se presiona */
+.backButton:active:not(:disabled) {
+  transform: translateY(0) scale(0.98); /* Combinamos el volver al sitio con el achicamiento */
+}
+
+/* ESTADO DESHABILITADO: Inmóvil */
+.backButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none; 
+}
+
 .footer {
   margin-top: 24px;
   text-align: center;
   font-size: 12px;
   color: #a0aec0;
+}
+
+.Loginfooter {
+  margin-top: 24px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 12px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #131517;
+  cursor: default;
+}
+
+.Loginfooter span {
+  color: #667eea;
+  font-weight: bold;
+  font-size: 15px;
 }
 
 /* Responsive */

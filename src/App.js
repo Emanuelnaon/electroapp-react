@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 import styles from './App.module.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -113,6 +114,7 @@ function App() {
         </main>
         
         <Footer />
+        <Toaster position="top-right" />
       </div>
     );
   }
@@ -177,6 +179,7 @@ function App() {
       </main>
       
       <Footer />
+      
     </div>
   );
 }

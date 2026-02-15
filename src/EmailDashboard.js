@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import styles from './EmailDashboard.module.css';
 import { supabase } from './supabaseClient';
 
@@ -115,41 +116,89 @@ function EmailDashboard() {
   };
 
   // Copiar al clipboard
-  const copyToClipboard = async (email, id) => {
-    try {
-      await navigator.clipboard.writeText(email);
-      setCopiedId(id);
-      setTimeout(() => setCopiedId(null), 2000);
-    } catch (err) {
-      console.error('Error al copiar:', err);
-    }
-  };
+const copyToClipboard = async (email, id) => {
+  try {
+    await navigator.clipboard.writeText(email);
+    setCopiedId(id);
+    toast.success('Email copiado al portapapeles'); // ← AGREGAR
+    setTimeout(() => setCopiedId(null), 2000);
+  } catch (err) {
+    console.error('Error al copiar:', err);
+    toast.error('Error al copiar'); // ← AGREGAR
+  }
+};
 
   // Eliminar email
-  const handleDelete = async (id, email) => {
-    const confirmDelete = window.confirm(
-      `¿Estás seguro de eliminar "${email}"?\n\nEsta acción no se puede deshacer.`
-    );
+const handleDelete = async (id, email) => {
+  // Confirmación con toast personalizado
+  toast((t) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div>
+        <strong>¿Eliminar este email?</strong>
+        <p style={{ margin: '5px 0', fontSize: '14px', color: '#666' }}>
+          {email}
+        </p>
+      </div>
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button
+          onClick={async () => {
+            toast.dismiss(t.id);
+            toast.loading('Eliminando...');
+            
+            try {
+              const { error } = await supabase
+                .from('waitlist')
+                .delete()
+                .eq('id', id);
 
-    if (!confirmDelete) return;
-
-    try {
-      const { error } = await supabase
-        .from('waitlist')
-        .delete()
-        .eq('id', id);
-
-      if (error) {
-        alert('Error al eliminar. Intenta de nuevo.');
-        console.error(error);
-      } else {
-        console.log('✅ Email eliminado:', email);
-      }
-    } catch (err) {
-      console.error('Error:', err);
-      alert('Error al eliminar.');
-    }
-  };
+              if (error) {
+                toast.dismiss();
+                toast.error('Error al eliminar');
+                console.error(error);
+              } else {
+                toast.dismiss();
+                toast.success('Email eliminado correctamente');
+                console.log('✅ Email eliminado:', email);
+              }
+            } catch (err) {
+              toast.dismiss();
+              toast.error('Error al eliminar');
+              console.error('Error:', err);
+            }
+          }}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#ef4444',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: '600'
+          }}
+        >
+          Eliminar
+        </button>
+        <button
+          onClick={() => toast.dismiss(t.id)}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#e5e7eb',
+            color: '#374151',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: '600'
+          }}
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  ), {
+    duration: Infinity, // No se cierra automáticamente
+    position: 'top-center',
+  });
+};
 
   // Exportar a CSV
   const exportToCSV = () => {

@@ -1,0 +1,14 @@
+/* Biblioteca de cursores para ElectroApp */
+:root {
+  /* 1. Cursor Secreto (para inputs de contraseña) */
+  --cursor-shhh: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px'><text y='24' x='2'>🤫</text></svg>"), text;
+
+  /* 2. Cursor Eléctrico (para botones y acciones principales) */
+  --cursor-electric: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='50' style='font-size:24px'><text y='24' x='2'>⚡</text></svg>"), pointer;
+
+  /* 3. Cursor de Advertencia (para errores o zonas restringidas) */
+  --cursor-warning: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px'><text y='24' x='2'>⚠️</text></svg>"), not-allowed;
+
+  /* 4. Cursor de Ayuda/Duda (para placeholders o info adicional) */
+  --cursor-help-bolt: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px'><text y='24' x='2'>🔌</text></svg>"), help;
+}

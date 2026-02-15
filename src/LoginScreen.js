@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { supabase } from './supabaseClient';
 import styles from './LoginScreen.module.css';
 
@@ -19,16 +20,18 @@ function LoginScreen({ onLoginSuccess, inline = false }) {
         password: password,
       });
 
-      if (error) {
-        setError(error.message);
-        return;
-      }
+   if (error) {
+  setError(error.message);
+  toast.error('Email o contraseña incorrectos'); // ← AGREGAR
+  return;
+}
 
-      console.log('✅ Login exitoso:', data.user.email);
-      
-      if (onLoginSuccess) {
-        onLoginSuccess(data.user);
-      }
+  console.log('✅ Login exitoso:', data.user.email);
+  toast.success(`Bienvenido ${data.user.email}`); // ← AGREGAR
+
+  if (onLoginSuccess) {
+    onLoginSuccess(data.user);
+}
 
     } catch (err) {
       console.error('Error en login:', err);
@@ -64,8 +67,8 @@ function LoginScreen({ onLoginSuccess, inline = false }) {
             />
           </div>
 
-          <div className={styles.inputGroup}>
-            <label htmlFor="password">Contraseña</label>
+          <div className={`${styles.inputGroup} ${styles.passwordGroup}`}>
+            <label htmlFor="password">Contraseña:</label>
             <input
               id="password"
               type="password"
@@ -94,9 +97,19 @@ function LoginScreen({ onLoginSuccess, inline = false }) {
           </button>
         </form>
 
+              {/* 🆕 BOTÓN VOLVER */}
         {!inline && (
-          <p className={styles.footer}>
-            Solo para administradores de ElectroApp
+          <button
+            onClick={() => window.location.href = '/'}
+            className={styles.backButton}
+          >
+            ← Volver al inicio
+          </button>
+        )}
+
+        {!inline && (
+          <p className={styles.Loginfooter}>
+            Solo para administradores de  <span>ElectroApp</span>
           </p>
         )}
       </div>

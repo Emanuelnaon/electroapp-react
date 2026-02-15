@@ -1,0 +1,502 @@
+/* Cotizador.module.css */
+.container {
+   background-color: #ffffff;
+   width: 95%;
+   /* Usamos casi toda la pantalla */
+   max-width: 1400px;
+   /* Límite para pantallas ultra-wide */
+   margin: 20px auto;
+   padding: 30px;
+   border-radius: 12px;
+   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+   font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* HEADER */
+.header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 25px;
+   border-bottom: 2px solid #e5e7eb;
+   padding-bottom: 15px;
+}
+
+.titleRow {
+   display: flex;
+   align-items: center;
+   gap: 20px;
+}
+
+.title {
+   font-size: 28px;
+   font-weight: 800;
+   color: #131517;
+   letter-spacing: -1px;
+}
+
+.shortcutsInfo {
+   font-size: 0.8rem;
+   color: #9ca3af;
+   background: #f3f4f6;
+   padding: 5px 10px;
+   border-radius: 4px;
+   display: flex;
+   gap: 15px;
+}
+
+.key {
+   font-weight: bold;
+   color: #131517;
+   border: 1px solid #d1d5db;
+   border-radius: 3px;
+   padding: 0 4px;
+   background: white;
+}
+
+/* CLIENTE - GRID HORIZONTAL */
+.clientSection {
+   display: grid;
+   grid-template-columns: 2fr 1fr 1fr;
+   /* Nombre ancho, tel medio, fecha fecha */
+   gap: 20px;
+   background-color: #f9fafb;
+   padding: 20px;
+   border-radius: 8px;
+   border: 1px solid #e5e7eb;
+   margin-bottom: 30px;
+}
+
+.inputGroup {
+   display: flex;
+   flex-direction: column;
+}
+
+.label {
+   font-size: 12px;
+   text-transform: uppercase;
+   font-weight: 700;
+   color: #6b7280;
+   margin-bottom: 6px;
+}
+
+.input {
+   padding: 12px;
+   border: 1px solid #d1d5db;
+   border-radius: 6px;
+   font-size: 16px;
+   transition: all 0.2s;
+   background: white;
+}
+
+.input:focus {
+   outline: none;
+   border-color: #FFD700;
+   box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+}
+
+/* TABLA - ESTILO PRO */
+.itemsTable {
+   width: 100%;
+   border-collapse: separate;
+   border-spacing: 0 5px;
+   /* Espacio entre filas */
+}
+
+.itemsTable th {
+   text-align: left;
+   padding: 10px;
+   color: #6b7280;
+   font-size: 13px;
+   font-weight: 600;
+   text-transform: uppercase;
+}
+
+.itemsTable tr {
+   transition: transform 0.1s;
+}
+
+.itemsTable td {
+   padding: 0;
+}
+
+/* Inputs de la tabla sin bordes visuales hasta el foco */
+.tableInput {
+   width: 100%;
+   padding: 12px 10px;
+   border: 1px solid transparent;
+   background: #fdfdfd;
+   font-size: 16px;
+   border-radius: 4px;
+}
+
+.tableInput:focus {
+   background: #fff;
+   border: 1px solid #FFD700;
+   outline: none;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+   font-weight: 500;
+}
+
+.itemsTable tr:hover .tableInput {
+   background: #f3f4f6;
+}
+
+.rowTotal {
+   padding: 0 10px;
+   font-weight: 600;
+   color: #374151;
+}
+
+/* FOOTER */
+.actions {
+   display: flex;
+   justify-content: flex-end;
+   /* Todo a la derecha */
+   align-items: center;
+   margin-top: 20px;
+   gap: 20px;
+}
+
+.totalBox {
+   text-align: right;
+   background-color: #131517;
+   color: #FFD700;
+   padding: 20px 40px;
+   border-radius: 8px;
+   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.totalLabel {
+   display: block;
+   font-size: 14px;
+   opacity: 0.8;
+   margin-bottom: 5px;
+}
+
+.totalAmount {
+   font-size: 32px;
+   font-weight: 800;
+}
+
+/* BOTONES */
+.iconBtn {
+   background: none;
+   border: none;
+   cursor: pointer;
+   font-size: 1.2rem;
+   padding: 5px;
+   opacity: 0.5;
+   transition: opacity 0.2s;
+}
+
+.iconBtn:hover {
+   opacity: 1;
+   color: #ef4444;
+}
+
+.backButton {
+   background: transparent;
+   border: 2px solid #e5e7eb;
+   padding: 10px 20px;
+   font-weight: 600;
+   cursor: pointer;
+   border-radius: 6px;
+   transition: all 0.2s;
+}
+
+.backButton:hover {
+   border-color: #131517;
+   background: #131517;
+   color: white;
+}
+
+.printButton {
+   background-color: #2563eb;
+   color: white;
+   border: none;
+   padding: 12px 24px;
+   font-weight: 600;
+   border-radius: 6px;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+}
+
+.printButton:hover {
+   background-color: #1d4ed8;
+}
+
+.clearButton {
+   background-color: white;
+   color: #ef4444;
+   /* Rojo alerta */
+   border: 2px solid #ef4444;
+   padding: 10px 15px;
+   /* Un poco más cuadrado */
+   font-size: 1.2rem;
+   border-radius: 6px;
+   cursor: pointer;
+   transition: all 0.2s;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.clearButton:hover {
+   background-color: #ef4444;
+   color: white;
+   transform: scale(1.05);
+   box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+}
+
+/* IMPRESIÓN - AQUÍ SE VUELVE CARTA */
+@media print {
+   .noPrint {
+      display: none !important;
+   }
+
+   .container {
+      width: 100%;
+      max-width: 100%;
+      box-shadow: none;
+      margin: 0;
+      padding: 0;
+   }
+
+   .clientSection {
+      background: none;
+      border: none;
+      padding: 0;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+   }
+
+   .input,
+   .tableInput {
+      border: none;
+      background: none;
+      padding: 5px 0;
+   }
+
+   .totalBox {
+      background: none;
+      color: black;
+      box-shadow: none;
+      border-top: 2px solid black;
+      border-radius: 0;
+   }
+
+   .totalAmount {
+      color: black;
+   }
+}
+
+/* Agrega esto al final de Cotizador.module.css */
+
+@media print {
+   .hideWhenPrinting {
+      display: none;
+   }
+}
+
+/* --- MEMBRETE / BRANDING --- */
+.documentHeader {
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-end;
+   margin-bottom: 30px;
+   padding-bottom: 20px;
+   border-bottom: 4px solid #FFD700;
+   /* Línea gruesa de marca */
+}
+
+.logoContainer {
+   display: flex;
+   align-items: center;
+   gap: 15px;
+}
+
+.logoCircle {
+   width: 60px;
+   height: 60px;
+   background-color: #FFD700;
+   color: #131517;
+   border-radius: 50%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   font-size: 32px;
+   font-weight: bold;
+   /* Para impresión precisa */
+   -webkit-print-color-adjust: exact;
+   print-color-adjust: exact;
+}
+
+.brandText {
+   display: flex;
+   flex-direction: column;
+}
+
+.brandName {
+   margin: 0;
+   font-size: 28px;
+   font-weight: 900;
+   color: #131517;
+   letter-spacing: -1px;
+   line-height: 1;
+}
+
+.brandSlogan {
+   margin: 0;
+   font-size: 14px;
+   color: #6b7280;
+   font-weight: 500;
+}
+
+.docInfo h3 {
+   margin: 0;
+   font-size: 24px;
+   color: #d1d5db;
+   /* Gris claro para que no compita */
+   font-weight: 800;
+   letter-spacing: 2px;
+}
+
+/* --- TOOLBAR (Botones de acción) --- */
+.toolbar {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 20px;
+   padding: 10px;
+   background-color: #f3f4f6;
+   border-radius: 8px;
+}
+
+/* --- AJUSTES DE IMPRESIÓN --- */
+@media print {
+   .noPrint {
+      display: none !important;
+   }
+
+   .hideWhenPrinting {
+      display: none;
+   }
+
+   .documentHeader {
+      border-bottom: 2px solid #000;
+      /* Negro puro para imprimir mejor */
+   }
+
+   /* Asegura que el círculo salga amarillo si la impresora soporta color */
+   .logoCircle {
+      background-color: #FFD700 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+   }
+
+   .container {
+      width: 100%;
+      margin: 0;
+      padding: 20px;
+      /* Un poco de margen en la hoja */
+      box-shadow: none;
+   }
+}
+/* ... tus estilos anteriores ... */
+
+/* BOTÓN ENVIAR (En la toolbar) */
+.sendButton {
+   background-color: #131517;
+   /* Negro */
+   color: #FFD700;
+   /* Amarillo */
+   border: none;
+   padding: 12px 24px;
+   font-weight: 700;
+   border-radius: 6px;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   transition: transform 0.2s;
+}
+
+.sendButton:hover {
+   transform: scale(1.05);
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* MODAL DE ENVÍO */
+.modalOverlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background-color: rgba(0, 0, 0, 0.7);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 2000;
+   /* Por encima de todo */
+}
+
+.modalContent {
+   background: white;
+   padding: 30px;
+   border-radius: 12px;
+   width: 90%;
+   max-width: 400px;
+   text-align: center;
+   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+   border: 2px solid #FFD700;
+}
+
+.modalContent h3 {
+   margin-top: 0;
+   color: #131517;
+   font-size: 24px;
+}
+
+/* BOTONES DEL MODAL */
+.whatsappBtn,
+.emailBtn,
+.cancelBtn {
+   display: block;
+   width: 100%;
+   padding: 15px;
+   margin: 10px 0;
+   border: none;
+   border-radius: 8px;
+   font-weight: 700;
+   font-size: 16px;
+   cursor: pointer;
+   transition: opacity 0.2s;
+}
+
+.whatsappBtn {
+   background-color: #25D366;
+   /* Verde WhatsApp */
+   color: white;
+}
+
+.emailBtn {
+   background-color: #3b82f6;
+   /* Azul Email */
+   color: white;
+}
+
+.cancelBtn {
+   background-color: #e5e7eb;
+   color: #374151;
+   margin-top: 20px;
+}
+
+.whatsappBtn:hover,
+.emailBtn:hover {
+   opacity: 0.9;
+   transform: translateY(-2px);
+}

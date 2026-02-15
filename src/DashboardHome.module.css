@@ -1,0 +1,136 @@
+.container {
+   padding: 20px 0;
+}
+
+.welcomeHeader {
+   margin-bottom: 40px;
+   text-align: center;
+}
+
+.welcomeHeader h2 {
+   font-size: 2rem;
+   color: #131517;
+   margin-bottom: 10px;
+}
+
+.grid {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+   gap: 25px;
+   margin-bottom: 40px;
+}
+
+/* --- TARJETA --- */
+.card {
+   background-color: #ffffff;
+   border: 2px solid #e5e7eb;
+   border-radius: 12px;
+   padding: 30px 20px;
+   text-align: center;
+   cursor: pointer;
+   transition: all 0.3s ease;
+   position: relative;
+   overflow: hidden;
+}
+
+.card:hover {
+   border-color: #FFD700;
+   /* Borde amarillo al pasar el mouse */
+   transform: translateY(-5px);
+   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.iconCircle {
+   width: 60px;
+   height: 60px;
+   background-color: #f3f4f6;
+   border-radius: 50%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 30px;
+   margin: 0 auto 20px auto;
+   transition: background 0.3s;
+}
+
+.card:hover .iconCircle {
+   background-color: #FFD700;
+   /* El icono se enciende en amarillo */
+}
+
+.cardTitle {
+   font-size: 1.2rem;
+   font-weight: 700;
+   color: #131517;
+   margin-bottom: 10px;
+}
+
+.cardDesc {
+   font-size: 0.9rem;
+   color: #6b7280;
+   line-height: 1.5;
+}
+
+/* --- ESTADO DESHABILITADO / PROXIMAMENTE --- */
+.disabled {
+   opacity: 0.7;
+   cursor: not-allowed;
+   border-style: dashed;
+}
+
+.disabled:hover {
+   transform: none;
+   border-color: #e5e7eb;
+   box-shadow: none;
+}
+
+.disabled:hover .iconCircle {
+   background-color: #f3f4f6;
+}
+
+.badge {
+   position: absolute;
+   top: 10px;
+   right: 10px;
+   background-color: #e5e7eb;
+   color: #374151;
+   font-size: 0.7rem;
+   padding: 4px 8px;
+   border-radius: 4px;
+   font-weight: 600;
+}
+
+/* --- ZONA SUPER ADMIN --- */
+.superAdminZone {
+   margin-top: 60px;
+   text-align: center;
+   opacity: 0.6;
+   transition: opacity 0.3s;
+}
+
+.superAdminZone:hover {
+   opacity: 1;
+}
+
+.divider {
+   height: 1px;
+   background-color: #e5e7eb;
+   margin: 20px auto;
+   width: 50%;
+}
+
+.zoneTitle {
+   font-size: 0.8rem;
+   text-transform: uppercase;
+   letter-spacing: 1px;
+   margin-bottom: 10px;
+}
+
+.superAdminBtn {
+   background: none;
+   border: 1px solid #131517;
+   padding: 8px 16px;
+   border-radius: 4px;
+   cursor: pointer;
+   font-size: 0.8rem;
+}

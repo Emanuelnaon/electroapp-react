@@ -4,13 +4,20 @@ const ScrollToTop = () => {
     const [isVisible, setIsVisible] = useState(false);
 
     // Mostrar botón cuando bajas 300px
-    const toggleVisibility = () => {
-        if (window.pageYOffset > 300) {
-            setIsVisible(true);
-        } else {
-            setIsVisible(false);
-        }
-    };
+ const toggleVisibility = () => {
+     // Buscamos en todas las fuentes posibles de scroll
+     const scrolled =
+         window.pageYOffset ||
+         document.documentElement.scrollTop ||
+         document.body.scrollTop ||
+         0;
+
+     if (scrolled > 300) {
+         setIsVisible(true);
+     } else {
+         setIsVisible(false);
+     }
+ };
 
     // La función mágica para subir
     const scrollToTop = () => {
@@ -20,10 +27,11 @@ const ScrollToTop = () => {
         });
     };
 
-    useEffect(() => {
-        window.addEventListener("scroll", toggleVisibility);
-        return () => window.removeEventListener("scroll", toggleVisibility);
-    }, []);
+useEffect(() => {
+    // El 'true' es la clave: escucha el scroll en cualquier parte de la app
+    window.addEventListener("scroll", toggleVisibility, true);
+    return () => window.removeEventListener("scroll", toggleVisibility, true);
+}, []);
 
     return (
         <>
@@ -43,7 +51,7 @@ const ScrollToTop = () => {
                         fontSize: "24px",
                         cursor: "pointer",
                         boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-                        zIndex: 1000,
+                        zIndex: 99999,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",

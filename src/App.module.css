@@ -1,10 +1,19 @@
 .main {
-  max-width: 900px;
+  /* Eliminamos el max-width fijo para que el Cotizador pueda expandirse */
+  width: 100%;
+  max-width: 1200px;
+  /* Aumentamos el tope para pantallas grandes */
   margin: 0 auto;
-  padding: 40px 20px;
-  /*background-color: white; /* ← AGREGAR para que el contenido sea legible */
-  border-radius: 12px; /* Opcional: esquinas redondeadas */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Opcional: sombra */
+  padding: 20px;
+  /* Reducimos padding para ganar espacio */
+  min-height: 80vh;
+  /* Asegura que siempre haya espacio para scrollear */
+}
+
+/* Agregamos esto para asegurar que el scroll sea global */
+:global(body) {
+  overflow-x: hidden;
+  height: auto !important;
 }
 
 .sectionTitle {

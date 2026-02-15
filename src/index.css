@@ -20,3 +20,29 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* index.css */
+
+/* REGLAS MAESTRAS DE IMPRESIÓN */
+@media print {
+
+  /* 1. Ocultar todo lo que sea "ruido" de la interfaz */
+  header,
+  footer,
+  nav,
+  .no-print-global {
+    display: none !important;
+  }
+
+  /* 2. Asegurar que el fondo sea blanco puro y sin sombras */
+  body {
+    background: white;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* 3. Evitar que se corten filas de la tabla entre hojas */
+  tr {
+    page-break-inside: avoid;
+  }
+}

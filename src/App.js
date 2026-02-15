@@ -9,11 +9,56 @@ import EmailDashboard from "./EmailDashboard";
 import LoginScreen from "./LoginScreen";
 import { supabase } from "./supabaseClient";
 import ScrollToTop from "./ScrollToTop";
+import DashboardHome from "./DashboardHome";
+import Cotizador from "./Cotizador";
+
+const ADMIN_EMAIL = "emanuelnaon@gmail.com";
 
 function App() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showLogin, setShowLogin] = useState(false);
+    const [showSuperAdminPanel, setShowSuperAdminPanel] = useState(false);
+    const [activeTool, setActiveTool] = useState(null); // Para manejar qué herramienta está activa
+
+    // === LÓGICA DEL DASHBOARD ===
+    const renderDashboard = () => {
+        const isSuperAdmin = user.email === ADMIN_EMAIL;
+
+        // A. Si está activa la herramienta COTIZADOR
+        if (activeTool === "cotizador") {
+            return <Cotizador onBack={() => setActiveTool(null)} />;
+        }
+
+        // B. Si el Admin activó manualmente la vista de lista
+        if (isSuperAdmin && showSuperAdminPanel) {
+            return (
+                <div className={styles.adminSection}>
+                    <button
+                        onClick={() => setShowSuperAdminPanel(false)}
+                        style={{ marginBottom: "20px", cursor: "pointer" }}
+                    >
+                        ← Volver al Menú Principal
+                    </button>
+                    <h2 className={styles.adminTitle}>
+                        🔒 Super Admin: Waitlist
+                    </h2>
+                    <EmailDashboard />
+                </div>
+            );
+        }
+
+        // C. POR DEFECTO: Mostrar el Menú de Herramientas (Cards)
+        return (
+            <DashboardHome
+                user={user}
+                isSuperAdmin={isSuperAdmin}
+                onOpenWaitlist={() => setShowSuperAdminPanel(true)}
+                // Pasamos la función para abrir el cotizador
+                onOpenCotizador={() => setActiveTool("cotizador")}
+            />
+        );
+    };
 
     useEffect(() => {
         // Detectar si está en /admin
@@ -119,18 +164,22 @@ function App() {
     }
 
     // ===== VISTA ADMIN (con login) =====
+    // ===== VISTA POST-LOGIN (Dashboard) =====
     return (
-        <div>
+        <>
+            {" "}
+            {/* Fragmento raíz sin ruidos */}
             <Header
                 titulo="ElectroApp"
-                subtitulo="Un sistema de gestión gratis para electricistas."
+                subtitulo="Panel de Gestión Profesional"
+                user={user}
+                onLogout={handleLogout}
             />
-
             <main className={styles.main}>
-                {/* Barra de sesión */}
-                <div className={styles.sessionBar}>
+                {/* Clase de impresión corregida */}
+                <div className={`${styles.sessionBar} no-print-global`}>
                     <span>
-                        👤 Sesión activa: <strong>{user.email}</strong>
+                        👤 Sesión: <strong>{user.email}</strong>
                     </span>
                     <button
                         onClick={handleLogout}
@@ -140,56 +189,13 @@ function App() {
                     </button>
                 </div>
 
-                <h2 className={styles.sectionTitle}>¿Por qué ElectroApp?</h2>
-
-                <div className={styles.benefitsGrid}>
-                    <BenefitCard
-                        emoji="📋"
-                        titulo="Presupuestos Rápidos"
-                        descripcion="Armá presupuestos profesionales en menos de 3 minutos"
-                    />
-
-                    <BenefitCard
-                        emoji="👥"
-                        titulo="Gestión de Clientes"
-                        descripcion="Seguimiento completo de trabajos y pagos"
-                    />
-
-                    <BenefitCard
-                        emoji="📱"
-                        titulo="Acceso Multiplataforma"
-                        descripcion="Gestiona desde cualquier dispositivo"
-                    />
-
-                    <BenefitCard
-                        emoji="🌐"
-                        titulo="Perfil Público"
-                        descripcion="Mostrá tu trabajo y precios"
-                    />
-                </div>
-
-                {!user && (
-                    <div className={styles.waitlistSection}>
-                        <WaitlistForm />
-                    </div>
-                )}
-                {/* Dashboard SOLO para admins */}
-                <div className={styles.divider}></div>
-
-                <div className={styles.adminSection}>
-                    <h2 className={styles.adminTitle}>
-                        🔒 Sección de Administración
-                    </h2>
-                    <p className={styles.adminSubtitle}>
-                        Solo visible para administradores
-                    </p>
-                    <EmailDashboard />
-                </div>
+                {renderDashboard()}
             </main>
-
             <Footer />
+            {/* El botón de subir debe estar acá, al final de todo */}
             <ScrollToTop />
-        </div>
+            <Toaster position="top-right" />
+        </>
     );
 }
 

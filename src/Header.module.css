@@ -1,31 +1,180 @@
+/* Header.module.css - ESTILO INDUSTRIAL ⚡ */
+
 .header {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
- /* background-color: #007acc;*/
-  color: white;
-  padding: 40px 20px;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #131517;
+  /* ⬛ Fondo Negro Intenso */
+  border-bottom: 4px solid #FFD700;
+  /* 🟨 Borde Amarillo grueso (Marca registrada) */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* --- LOGO Y TÍTULOS --- */
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logoCircle {
+  width: 45px;
+  height: 45px;
+  background-color: #FFD700;
+  /* Círculo Amarillo */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #131517;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+  /* Resplandor */
+}
+
+.brandInfo {
+  display: flex;
+  flex-direction: column;
 }
 
 .title {
-  font-size: 48px;
-  margin: 0 0 10px 0;
-  font-weight: 700;
+  color: #ffffff;
+  /* Texto Blanco */
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
 }
 
 .subtitle {
-  font-size: 18px;
+  color: #9ca3af;
+  /* Gris claro */
   margin: 0;
-  opacity: 0.95;
-  font-weight: 300;
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
+/* --- NAVEGACIÓN (Derecha) --- */
+.navBar {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Link simple (Beneficios, etc.) */
+.navLink {
+  color: #e5e7eb;
+  /* Blanco suave */
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+  cursor: var(--cursor-electric);
+}
+
+.navLink:hover {
+  color: #FFD700;
+  /* Se ilumina amarillo al pasar el mouse */
+}
+
+/* --- EL BOTÓN PROTAGONISTA: ELECTRICISTAS --- */
+.electricianButton {
+  background-color: #FFD700;
+  /* 🟨 Fondo Amarillo */
+  color: #131517;
+  /* Texto Negro */
+  border: 2px solid #FFD700;
+  padding: 10px 24px;
+  border-radius: 6px;
+  /* Bordes más rectos, más industrial */
+  font-weight: 800;
+  /* Letra muy gruesa */
+  font-size: 0.95rem;
+  cursor: var(--cursor-electric);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.electricianButton:hover {
+  background-color: #ffe033;
+  /* Amarillo más claro */
+  transform: translateY(-2px);
+  /* Se levanta */
+  box-shadow: 0 6px 12px rgba(255, 215, 0, 0.3);
+  /* Sombra amarilla */
+}
+
+.electricianButton:active {
+  transform: translateY(0);
+}
+
+/* --- USUARIO LOGUEADO --- */
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+  /* Fondo translúcido */
+  padding: 5px 15px;
+  border-radius: 50px;
+  border: 1px solid #374151;
+}
+
+.userBadge {
+  color: #FFD700;
+  /* Usuario en amarillo */
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.navLinkLogout {
+  background: none;
+  border: none;
+  color: #ef4444;
+  /* Rojo alerta */
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  padding: 5px;
+}
+
+.navLinkLogout:hover {
+  text-decoration: underline;
+  color: #ff6b6b;
+}
+
+/* --- RESPONSIVE (Móvil) --- */
 @media (max-width: 768px) {
-  .title {
-    font-size: 32px;
+  .header {
+    padding: 15px;
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
   }
-  
+
+  .logoContainer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .navBar {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
   .subtitle {
-    font-size: 16px;
+    display: none;
+    /* Ocultamos subtítulo en móvil para ahorrar espacio */
   }
 }

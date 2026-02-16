@@ -46,3 +46,27 @@ code {
     page-break-inside: avoid;
   }
 }
+/* --- AGREGAR AL FINAL DE src/index.css --- */
+
+/* Cuando el modo oscuro está activo */
+body[data-theme='dark'] {
+  background: #111827 !important;
+  /* Gris muy oscuro (Casi negro) */
+  color: #f3f4f6 !important;
+  /* Texto blanco suave */
+}
+
+/* Oscurecer el contenedor principal en modo oscuro */
+body[data-theme='dark'] .main-container-hook {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+/* Cambiar tarjetas en modo oscuro */
+body[data-theme='dark'] div[class*="card"],
+body[data-theme='dark'] div[class*="paper"] {
+  background-color: #1f2937;
+  /* Gris oscuro para tarjetas */
+  color: #fff;
+  border-color: #4b5563;
+}

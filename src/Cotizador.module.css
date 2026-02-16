@@ -2,9 +2,7 @@
 .container {
    background-color: #ffffff;
    width: 95%;
-   /* Usamos casi toda la pantalla */
    max-width: 1400px;
-   /* Límite para pantallas ultra-wide */
    margin: 20px auto;
    padding: 30px;
    border-radius: 12px;
@@ -58,7 +56,6 @@
 .clientSection {
    display: grid;
    grid-template-columns: 2fr 1fr 1fr;
-   /* Nombre ancho, tel medio, fecha fecha */
    gap: 20px;
    background-color: #f9fafb;
    padding: 20px;
@@ -100,7 +97,6 @@
    width: 100%;
    border-collapse: separate;
    border-spacing: 0 5px;
-   /* Espacio entre filas */
 }
 
 .itemsTable th {
@@ -120,7 +116,6 @@
    padding: 0;
 }
 
-/* Inputs de la tabla sin bordes visuales hasta el foco */
 .tableInput {
    width: 100%;
    padding: 12px 10px;
@@ -152,7 +147,6 @@
 .actions {
    display: flex;
    justify-content: flex-end;
-   /* Todo a la derecha */
    align-items: center;
    margin-top: 20px;
    gap: 20px;
@@ -231,10 +225,8 @@
 .clearButton {
    background-color: white;
    color: #ef4444;
-   /* Rojo alerta */
    border: 2px solid #ef4444;
    padding: 10px 15px;
-   /* Un poco más cuadrado */
    font-size: 1.2rem;
    border-radius: 6px;
    cursor: pointer;
@@ -251,7 +243,53 @@
    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
 }
 
-/* IMPRESIÓN - AQUÍ SE VUELVE CARTA */
+/* BOTÓN ENVIAR */
+.sendButton {
+   background-color: #131517;
+   color: #FFD700;
+   border: none;
+   padding: 12px 24px;
+   font-weight: 700;
+   border-radius: 6px;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   transition: transform 0.2s;
+}
+
+.sendButton:hover {
+   transform: scale(1.05);
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* === ✅ EL BOTÓN NUEVO DE GUARDAR === */
+.saveButton {
+   background-color: #10b981;
+   /* Verde */
+   color: white;
+   border: none;
+   padding: 12px 24px;
+   font-weight: 600;
+   border-radius: 6px;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   transition: transform 0.2s;
+}
+
+.saveButton:hover {
+   background-color: #059669;
+   transform: scale(1.05);
+}
+
+.saveButton:disabled {
+   background-color: #a7f3d0;
+   cursor: not-allowed;
+}
+
+/* IMPRESIÓN */
 @media print {
    .noPrint {
       display: none !important;
@@ -291,17 +329,13 @@
    .totalAmount {
       color: black;
    }
-}
 
-/* Agrega esto al final de Cotizador.module.css */
-
-@media print {
    .hideWhenPrinting {
       display: none;
    }
 }
 
-/* --- MEMBRETE / BRANDING --- */
+/* MEMBRETE */
 .documentHeader {
    display: flex;
    justify-content: space-between;
@@ -309,7 +343,6 @@
    margin-bottom: 30px;
    padding-bottom: 20px;
    border-bottom: 4px solid #FFD700;
-   /* Línea gruesa de marca */
 }
 
 .logoContainer {
@@ -329,7 +362,6 @@
    align-items: center;
    font-size: 32px;
    font-weight: bold;
-   /* Para impresión precisa */
    -webkit-print-color-adjust: exact;
    print-color-adjust: exact;
 }
@@ -359,12 +391,11 @@
    margin: 0;
    font-size: 24px;
    color: #d1d5db;
-   /* Gris claro para que no compita */
    font-weight: 800;
    letter-spacing: 2px;
 }
 
-/* --- TOOLBAR (Botones de acción) --- */
+/* TOOLBAR */
 .toolbar {
    display: flex;
    justify-content: space-between;
@@ -373,60 +404,6 @@
    padding: 10px;
    background-color: #f3f4f6;
    border-radius: 8px;
-}
-
-/* --- AJUSTES DE IMPRESIÓN --- */
-@media print {
-   .noPrint {
-      display: none !important;
-   }
-
-   .hideWhenPrinting {
-      display: none;
-   }
-
-   .documentHeader {
-      border-bottom: 2px solid #000;
-      /* Negro puro para imprimir mejor */
-   }
-
-   /* Asegura que el círculo salga amarillo si la impresora soporta color */
-   .logoCircle {
-      background-color: #FFD700 !important;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-   }
-
-   .container {
-      width: 100%;
-      margin: 0;
-      padding: 20px;
-      /* Un poco de margen en la hoja */
-      box-shadow: none;
-   }
-}
-/* ... tus estilos anteriores ... */
-
-/* BOTÓN ENVIAR (En la toolbar) */
-.sendButton {
-   background-color: #131517;
-   /* Negro */
-   color: #FFD700;
-   /* Amarillo */
-   border: none;
-   padding: 12px 24px;
-   font-weight: 700;
-   border-radius: 6px;
-   cursor: pointer;
-   display: flex;
-   align-items: center;
-   gap: 8px;
-   transition: transform 0.2s;
-}
-
-.sendButton:hover {
-   transform: scale(1.05);
-   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* MODAL DE ENVÍO */
@@ -441,7 +418,6 @@
    justify-content: center;
    align-items: center;
    z-index: 2000;
-   /* Por encima de todo */
 }
 
 .modalContent {
@@ -461,7 +437,6 @@
    font-size: 24px;
 }
 
-/* BOTONES DEL MODAL */
 .whatsappBtn,
 .emailBtn,
 .cancelBtn {
@@ -479,13 +454,11 @@
 
 .whatsappBtn {
    background-color: #25D366;
-   /* Verde WhatsApp */
    color: white;
 }
 
 .emailBtn {
    background-color: #3b82f6;
-   /* Azul Email */
    color: white;
 }
 
@@ -499,4 +472,200 @@
 .emailBtn:hover {
    opacity: 0.9;
    transform: translateY(-2px);
+}
+/* --- AGREGA ESTO AL FINAL DE TU CSS --- */
+
+/* Clase nueva para los botones (en escritorio se ven en fila) */
+.buttonsContainer {
+   display: flex;
+   gap: 10px;
+}
+
+/* =========================================
+   VISTA MÓVIL (Celulares)
+   ========================================= */
+@media (max-width: 768px) {
+
+   /* 1. Ajustar el contenedor principal para que no desborde */
+   .container {
+      width: 100%;
+      padding: 15px;
+      margin: 0;
+      border-radius: 0;
+      box-shadow: none;
+      overflow-x: hidden;
+      /* Evita scroll horizontal fantasma */
+   }
+
+   /* 2. Toolbar: Columna vertical */
+   .toolbar {
+      flex-direction: column;
+      align-items: flex-start;
+      /* Alinea todo a la izquierda */
+      gap: 15px;
+   }
+
+   /* El botón ESC se queda arriba a la izquierda solo */
+   .titleRow {
+      width: 100%;
+      margin-bottom: 5px;
+   }
+
+   /* 3. OCULTAR SHORTCUTS (Lo que pediste) */
+   .shortcutsInfo {
+      display: none !important;
+   }
+
+   /* 4. BOTONES EN GRILLA 2x2 */
+   .buttonsContainer {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      /* 2 columnas iguales */
+      width: 100%;
+      gap: 10px;
+   }
+
+   /* Hacemos que los botones ocupen todo el ancho de su celda */
+   .saveButton,
+   .clearButton,
+   .printButton,
+   .sendButton {
+      width: 100%;
+      justify-content: center;
+      padding: 12px;
+   }
+
+   /* 5. INPUTS DEL CLIENTE: UNO DEBAJO DEL OTRO */
+   .clientSection {
+      display: flex;
+      /* Cambiamos grid por flex vertical */
+      flex-direction: column;
+      gap: 15px;
+      padding: 15px;
+   }
+
+   /* HEADER DOCUMENTO (Logo y Título) */
+   .documentHeader {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 15px;
+   }
+
+   .docInfo h3 {
+      font-size: 18px;
+      /* Título más pequeño */
+   }
+
+   /* 6. AJUSTE DE LA TABLA (Para que no explote) */
+   .itemsTable th {
+      font-size: 11px;
+      padding: 5px;
+   }
+
+   .itemsTable input {
+      font-size: 14px;
+      /* Letra legible en móvil */
+      padding: 8px 5px;
+   }
+
+   /* Reducimos anchos específicos para dar espacio a la descripción */
+   .itemsTable th:nth-child(2),
+   /* Cantidad */
+   .itemsTable td:nth-child(2) {
+      width: 12% !important;
+   }
+
+   .itemsTable th:nth-child(3),
+   /* Precio */
+   .itemsTable td:nth-child(3) {
+      width: 20% !important;
+   }
+
+   .itemsTable th:nth-child(4),
+   /* Subtotal */
+   .itemsTable td:nth-child(4) {
+      display: none;
+      /* Opcional: Ocultar subtotal por fila si falta espacio */
+   }
+
+   /* Ajustar botón de eliminar (x) */
+   .iconBtn {
+      font-size: 1.5rem;
+      padding: 0 10px;
+   }
+}
+/* =========================================
+   MODO OSCURO (Midnight Blue #191970)
+   ========================================= */
+
+/* 1. Fondo principal del Cotizador */
+:global(body[data-theme='dark']) .container {
+   background-color: #191970;
+   /* El color que pediste */
+   color: #ffffff;
+   border: 1px solid #4b5563;
+   box-shadow: none;
+}
+
+/* 2. Paneles internos (Cliente y Barra de herramientas) */
+:global(body[data-theme='dark']) .clientSection,
+:global(body[data-theme='dark']) .toolbar {
+   background-color: rgba(0, 0, 0, 0.2);
+   /* Un poco más oscuro para separar */
+   border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* 3. Inputs (Cajas de texto) */
+:global(body[data-theme='dark']) .input,
+:global(body[data-theme='dark']) .tableInput {
+   background-color: rgba(0, 0, 0, 0.3);
+   /* Fondo oscuro translúcido */
+   color: #ffffff;
+   border-color: rgba(255, 255, 255, 0.3);
+}
+
+:global(body[data-theme='dark']) .input::placeholder,
+:global(body[data-theme='dark']) .tableInput::placeholder {
+   color: #a0aec0;
+   /* Texto de ayuda gris claro */
+}
+
+/* 4. Textos y Etiquetas */
+:global(body[data-theme='dark']) .label,
+:global(body[data-theme='dark']) .title,
+:global(body[data-theme='dark']) .docInfo h3,
+:global(body[data-theme='dark']) .totalLabel {
+   color: #e2e8f0;
+}
+
+:global(body[data-theme='dark']) .totalAmount {
+   color: #FFD700;
+   /* El total sigue en amarillo */
+}
+
+/* 5. Tabla */
+:global(body[data-theme='dark']) .itemsTable th {
+   color: #cbd5e0;
+}
+
+:global(body[data-theme='dark']) .rowTotal {
+   color: #ffffff;
+}
+
+/* 6. Botones (Iconos de borrar X) */
+:global(body[data-theme='dark']) .iconBtn {
+   color: #fc8181;
+   /* Rojo claro */
+}
+
+:global(body[data-theme='dark']) .shortcutsInfo {
+   background-color: rgba(0, 0, 0, 0.4);
+   color: #ccc;
+}
+
+:global(body[data-theme='dark']) .key {
+   background-color: #333;
+   color: white;
+   border-color: #555;
 }

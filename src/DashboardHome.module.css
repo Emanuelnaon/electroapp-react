@@ -134,3 +134,40 @@
    cursor: pointer;
    font-size: 0.8rem;
 }
+/* =========================================
+   MODO OSCURO (Dashboard)
+   ========================================= */
+
+/* 1. Título "Hola Admin" y Títulos de Tarjetas (H3) en AZUL */
+:global(body[data-theme='dark']) .welcomeHeader h2,
+:global(body[data-theme='dark']) .cardTitle {
+   color: #2a7fd5;
+   /* El azul que pediste */
+}
+
+/* 2. Subtítulos y Descripciones (P) en GRIS CLARO */
+:global(body[data-theme='dark']) .welcomeSubtitle,
+:global(body[data-theme='dark']) .cardDesc,
+:global(body[data-theme='dark']) .cardText {
+   color: #d1d1d1;
+   /* El gris claro que pediste */
+}
+
+/* 3. Ajuste extra: Fondo de las tarjetas en modo oscuro */
+/* (Para asegurar que se vean bien sobre el fondo general) */
+:global(body[data-theme='dark']) .dashboardCard,
+:global(body[data-theme='dark']) .card {
+   background-color: #1f2937;
+   /* Gris oscuro para la tarjeta */
+   border-color: #374151;
+   /* Borde sutil */
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* 4. Iconos dentro de las tarjetas */
+:global(body[data-theme='dark']) .iconCircle,
+:global(body[data-theme='dark']) .cardIcon {
+   background-color: #374151;
+   /* Fondo del icono más oscuro */
+   border: 1px solid #4b5563;
+}

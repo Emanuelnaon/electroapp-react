@@ -1,20 +1,15 @@
 .main {
-  /* Eliminamos el max-width fijo para que el Cotizador pueda expandirse */
   width: 100%;
-  max-width: 1200px;
-  /* Aumentamos el tope para pantallas grandes */
+  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
-  /* Reducimos padding para ganar espacio */
   min-height: 80vh;
-  /* Asegura que siempre haya espacio para scrollear */
+  border: dashed 4px #b198dc;
+  border-radius: 12px;
 }
 
 /* Agregamos esto para asegurar que el scroll sea global */
-:global(body) {
-  overflow-x: hidden;
-  height: auto !important;
-}
+
 
 .sectionTitle {
   text-align: center;
@@ -44,51 +39,6 @@
   background-color: #f7fafc;
 }
 
-/* Session bar */
-.sessionBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 20px;
-  background-color: #f0f4ff;
-  border: 2px solid #667eea;
-  border-radius: 8px;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.sessionBar span {
-  font-size: 14px;
-  color: #2d3748;
-}
-
-.sessionBar strong {
-  color: #667eea;
-  font-weight: 600;
-}
-
-.logoutButton {
-  padding: 8px 16px;
-  background-color: #667eea;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.logoutButton:hover {
-  background-color: #5568d3;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
-}
-
-.logoutButton:active {
-  transform: translateY(0);
-}
 
 /* ===== RESPONSIVE ===== */
 
@@ -102,12 +52,7 @@
     margin-bottom: 25px;
   }
 
-  .sessionBar {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .logoutButton {
+   .logoutButton {
     width: 100%;
   }
 }

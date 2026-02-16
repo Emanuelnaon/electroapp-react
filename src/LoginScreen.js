@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { supabase } from './supabaseClient';
 import styles from './LoginScreen.module.css';
 
+
 function LoginScreen({ onLoginSuccess, inline = false }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

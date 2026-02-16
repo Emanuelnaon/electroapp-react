@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 const ScrollToTop = () => {
     const [isVisible, setIsVisible] = useState(false);
 
-    // Mostrar botón cuando bajas 300px
+    // Mostrar botón cuando bajas 200px
  const toggleVisibility = () => {
      // Buscamos en todas las fuentes posibles de scroll
      const scrolled =
@@ -12,7 +12,7 @@ const ScrollToTop = () => {
          document.body.scrollTop ||
          0;
 
-     if (scrolled > 300) {
+     if (scrolled > 200) {
          setIsVisible(true);
      } else {
          setIsVisible(false);
@@ -51,7 +51,7 @@ useEffect(() => {
                         fontSize: "24px",
                         cursor: "pointer",
                         boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-                        zIndex: 99999,
+                        zIndex: 9999999,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",

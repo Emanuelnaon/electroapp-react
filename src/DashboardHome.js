@@ -1,24 +1,54 @@
-import React from "react";
+import React, { useState, useEffect } from "react"; // ✅ Agregados useState y useEffect
 import styles from "./DashboardHome.module.css";
+import { supabase } from "./supabaseClient";
 
-const DashboardHome = ({ user, isSuperAdmin, onOpenWaitlist, onOpenCotizador}) => {
-    // Las 4 Herramientas que pediste
+const DashboardHome = ({
+    user,
+    isSuperAdmin,
+    onOpenWaitlist,
+    onOpenCotizador,
+    onOpenClientes,
+}) => {
+    // 1. Estado para el contador
+    const [totalClientes, setTotalClientes] = useState(0);
+
+    // 2. Efecto para contar clientes reales
+    useEffect(() => {
+        const fetchCount = async () => {
+            if (!user) return;
+
+            const { count } = await supabase
+                .from("clientes")
+                .select("*", { count: "exact", head: true })
+                .eq("user_id", user.id);
+
+            setTotalClientes(count || 0);
+        };
+        fetchCount();
+    }, [user]);
+
+
+    // 3. Las Herramientas (Con Clientes activado y descripción dinámica)
     const tools = [
         {
             id: "cotizador",
             title: "Presupuestador",
             icon: "⚡",
             desc: "Crea cotizaciones profesionales en PDF en minutos.",
-            status: "active", // Este será el primero que haremos
-            action: onOpenCotizador
+            status: "active",
+            action: onOpenCotizador,
         },
         {
             id: "clientes",
             title: "Gestión de Clientes",
             icon: "👥",
-            desc: "Base de datos de tus clientes, historial y deudas.",
-            status: "coming",
-            action: () => alert("Módulo de Clientes en construcción"),
+            // ✅ Descripción dinámica: Muestra la cantidad si hay, sino el texto default
+            desc:
+                totalClientes > 0
+                    ? `${totalClientes} contactos guardados.`
+                    : "Base de datos de tus clientes, historial y deudas.",
+            status: "active", // ✅ ACTIVADO (Antes estaba 'coming')
+            action: onOpenClientes,
         },
         {
             id: "proveedores",
@@ -45,7 +75,7 @@ const DashboardHome = ({ user, isSuperAdmin, onOpenWaitlist, onOpenCotizador}) =
                 <p>¿Qué vamos a hacer hoy?</p>
             </header>
 
-            {/* GRILLA DE HERRAMIENTAS */}
+            {/* GRILLA DE HERRAMIENTAS (Tu diseño original) */}
             <div className={styles.grid}>
                 {tools.map((tool) => (
                     <div

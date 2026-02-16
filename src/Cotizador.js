@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./Cotizador.module.css";
 import toast from "react-hot-toast";
+import { supabase } from "./supabaseClient"; // ✅ AGREGADO
 
 const Cotizador = ({ onBack }) => {
     // 1. ESTADOS Y REFERENCIAS
@@ -14,9 +15,76 @@ const Cotizador = ({ onBack }) => {
         { id: 1, descripcion: "", cantidad: 1, precio: "" },
     ]);
     const [showShareModal, setShowShareModal] = useState(false);
+    const [isSaving, setIsSaving] = useState(false); // ✅ AGREGADO
     const itemsRef = useRef([]);
 
     // 2. DEFINICIÓN DE TODAS LAS FUNCIONES (Lógica)
+
+    // ✅ NUEVA FUNCIÓN: GUARDAR EN SUPABASE
+    const handleSaveQuote = async () => {
+        if (!cliente.nombre.trim())
+            return toast.error("El nombre del cliente es obligatorio");
+
+        setIsSaving(true);
+        const toastId = toast.loading("Guardando...");
+
+        try {
+            // A. Obtener usuario
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
+            if (!user) throw new Error("Debes iniciar sesión");
+
+            let finalClienteId = null;
+
+            // B. Buscar o Crear Cliente
+            const { data: clientesExistentes } = await supabase
+                .from("clientes")
+                .select("id")
+                .eq("user_id", user.id)
+                .ilike("nombre", cliente.nombre.trim())
+                .limit(1);
+
+            if (clientesExistentes?.length > 0) {
+                finalClienteId = clientesExistentes[0].id;
+            } else {
+                const { data: nuevoCliente, error: errC } = await supabase
+                    .from("clientes")
+                    .insert([
+                        {
+                            nombre: cliente.nombre.trim(),
+                            telefono: cliente.telefono,
+                            email: cliente.email,
+                            user_id: user.id,
+                        },
+                    ])
+                    .select()
+                    .single();
+                if (errC) throw errC;
+                finalClienteId = nuevoCliente.id;
+            }
+
+            // C. Guardar Presupuesto
+            const { error: errP } = await supabase.from("presupuestos").insert([
+                {
+                    user_id: user.id,
+                    cliente_id: finalClienteId,
+                    items: items,
+                    total: total,
+                    fecha: cliente.fecha,
+                },
+            ]);
+
+            if (errP) throw errP;
+
+            toast.success("¡Guardado en la nube! ☁️", { id: toastId });
+        } catch (error) {
+            console.error(error);
+            toast.error("Error al guardar", { id: toastId });
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     // Limpiar campos
     const handleClear = () => {
@@ -162,7 +230,7 @@ const Cotizador = ({ onBack }) => {
         }
     };
 
-    // 3. USE EFFECT (Ahora sí, al final, cuando las funciones ya existen)
+    // 3. USE EFFECT
     useEffect(() => {
         const handleGlobalKeys = (e) => {
             if (e.key === "Escape") {
@@ -187,13 +255,16 @@ const Cotizador = ({ onBack }) => {
                     e.preventDefault();
                     handleClear();
                 }
+                // ✅ ATAJO DE GUARDADO (Alt + S)
+                if (e.altKey && e.key.toLowerCase() === "s") {
+                    e.preventDefault();
+                    handleSaveQuote();
+                }
             }
         };
 
         window.addEventListener("keydown", handleGlobalKeys);
         return () => window.removeEventListener("keydown", handleGlobalKeys);
-
-        // Desactivamos la advertencia de dependencias para evitar bucles infinitos
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [cliente, items, showShareModal]);
 
@@ -231,16 +302,25 @@ const Cotizador = ({ onBack }) => {
                         <span className={styles.key}>Enter</span> Siguiente
                     </span>
                     <span>
+                        <span className={styles.key}>Alt+S</span> Guardar
+                    </span>{" "}
+                    {/* ✅ AVISO ATAJO */}
+                    <span>
                         <span className={styles.key}>Ctrl+P</span> Imprimir
                     </span>
-                    <span>
-                        <span className={styles.key}>Ctrl+Enter</span> Enviar
-                    </span>
-                    <span>
-                        <span className={styles.key}>Alt+L</span> Limpiar
-                    </span>
                 </div>
-                <div style={{ display: "flex", gap: "10px" }}>
+
+                <div className={styles.buttonsContainer}>
+                    {/* ✅ BOTÓN DE GUARDAR INSERTADO AQUÍ */}
+                    <button
+                        onClick={handleSaveQuote}
+                        disabled={isSaving}
+                        className={styles.saveButton}
+                        title="Guardar en la nube (Alt + S)"
+                    >
+                        {isSaving ? "⏳" : "💾 Guardar"}
+                    </button>
+
                     <button
                         onClick={handleClear}
                         className={styles.clearButton}

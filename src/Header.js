@@ -1,6 +1,15 @@
+import React from "react";
 import styles from "./Header.module.css";
 
-function Header({ titulo, subtitulo, user, onLogout }) {
+// 1. AQUI AGREGAMOS "darkMode" y "toggleDarkMode"
+function Header({
+    titulo,
+    subtitulo,
+    user,
+    onLogout,
+    darkMode,
+    toggleDarkMode,
+}) {
     return (
         <header className={styles.header}>
             {/* LADO IZQUIERDO: LOGO Y TÍTULO */}
@@ -16,11 +25,30 @@ function Header({ titulo, subtitulo, user, onLogout }) {
 
             {/* LADO DERECHO: NAVBAR */}
             <nav className={styles.navBar}>
+                {/* 2. BOTÓN SOL/LUNA (Con estilo seguro) */}
+                <button
+                    onClick={toggleDarkMode}
+                    title="Cambiar Modo"
+                    style={{
+                        background: "transparent",
+                        border: "1px solid #333",
+                        borderRadius: "50px",
+                        cursor: "pointer",
+                        fontSize: "1.2rem",
+                        padding: "5px 10px",
+                        marginRight: "10px",
+                        display: "flex",
+                        alignItems: "center",
+                        color: "#FFD700", // Amarillo para que combine
+                    }}
+                >
+                    {darkMode ? "☀️" : "🌙"}
+                </button>
+
                 {user ? (
                     /* Si está logueado */
                     <div className={styles.userMenu}>
                         <span className={styles.userBadge}>
-                            {/* Aquí luego mostraremos el rol real desde Supabase */}
                             👤 {user.email.split("@")[0]}
                         </span>
                         <button
@@ -33,9 +61,10 @@ function Header({ titulo, subtitulo, user, onLogout }) {
                 ) : (
                     /* Si NO está logueado */
                     <div className={styles.publicMenu}>
-                        {/* Puedes agregar más links aquí en el futuro como 'Precios', 'Contacto' */}
+                        {/* Texto para evitar error de accesibilidad
                         <a href="#beneficios" className={styles.navLink}>
-                        </a>
+                            Beneficios
+                        </a> */}
 
                         <button
                             onClick={() => (window.location.href = "/admin")}

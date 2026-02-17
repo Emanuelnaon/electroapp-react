@@ -12,6 +12,8 @@ import ScrollToTop from "./ScrollToTop";
 import Cotizador from "./Cotizador";
 import Clientes from "./Clientes";
 import DashboardHome from "./DashboardHome"; // Importamos el dashboard que arreglamos antes
+import Historial from "./Historial"; // Importamos el historial de presupuestos
+
 
 const ADMIN_EMAIL = "emanuelnaon@gmail.com";
 
@@ -85,6 +87,11 @@ function App() {
             return <Clientes onBack={() => setCurrentView("dashboard")} />;
         }
 
+            // 3. Si eligió HISTORIAL
+        if (currentView === "historial") {
+            return <Historial onBack={() => setCurrentView("dashboard")} />;
+        }
+
         // 3. Si eligió ADMIN PANEL (Solo Super Admin)
         if (isSuperAdmin && showSuperAdminPanel) {
             return (
@@ -112,6 +119,7 @@ function App() {
                 onOpenWaitlist={() => setShowSuperAdminPanel(true)}
                 onOpenCotizador={() => setCurrentView("cotizador")}
                 onOpenClientes={() => setCurrentView("clientes")} // Conectamos el botón
+                onOpenHistorial={() => setCurrentView("historial")} // Conectamos el botón de historial
             />
         );
     };

@@ -67,7 +67,6 @@
 /* --- GRID SYSTEM (TARJETAS ENCASILLADAS) --- */
 .grid {
    display: grid;
-   /* Esto crea columnas automáticas. Minimo 300px por tarjeta */
    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
    gap: 20px;
 }
@@ -79,7 +78,6 @@
    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
    border: 1px solid #e2e8f0;
    overflow: hidden;
-   /* Para que el borde redondeado corte el contenido */
    display: flex;
    flex-direction: column;
    transition: transform 0.2s, box-shadow 0.2s;
@@ -87,7 +85,6 @@
 
 .card:hover {
    transform: translateY(-5px);
-   /* Se levanta un poco al pasar el mouse */
    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -106,7 +103,6 @@
    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
    color: white;
    border-radius: 12px;
-   /* Cuadrado redondeado moderno */
    display: flex;
    align-items: center;
    justify-content: center;
@@ -144,14 +140,12 @@
 
 .deleteBtn:hover {
    color: #ef4444;
-   /* Rojo al pasar el mouse */
 }
 
 /* PARTE DEL MEDIO (Datos) */
 .cardBody {
    padding: 0 20px 20px 20px;
    flex: 1;
-   /* Empuja el footer hacia abajo */
 }
 
 .contactRow {
@@ -200,7 +194,6 @@
 .statMoney {
    font-weight: 800;
    color: #48bb78;
-   /* Verde dinero */
    font-size: 1.1rem;
 }
 
@@ -213,7 +206,6 @@
 /* =========================================
    MODO OSCURO (Midnight Blue & Gold)
    ========================================= */
-
 :global(body[data-theme='dark']) .title {
    color: #ffffff;
    border-left-color: #FFD700;
@@ -227,7 +219,6 @@
 
 :global(body[data-theme='dark']) .card {
    background-color: #191970;
-   /* Fondo Azul Profundo */
    border-color: #2a4365;
 }
 
@@ -247,19 +238,14 @@
    color: #4a5568;
 }
 
-/* Avatar en modo oscuro */
 :global(body[data-theme='dark']) .avatar {
    background: linear-gradient(135deg, #FFD700 0%, #d69e2e 100%);
-   /* Dorado */
    color: #1a202c;
-   /* Letra negra */
    box-shadow: 0 2px 5px rgba(255, 215, 0, 0.3);
 }
 
-/* Footer en modo oscuro */
 :global(body[data-theme='dark']) .cardFooter {
    background-color: rgba(0, 0, 0, 0.2);
-   /* Más oscuro que la tarjeta */
    border-top-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -274,8 +260,6 @@
 :global(body[data-theme='dark']) .statMoney {
    color: #FFD700;
 }
-
-/* Total en Dorado */
 
 @keyframes fadeIn {
    from {
@@ -303,6 +287,5 @@
 
    .grid {
       grid-template-columns: 1fr;
-      /* Una columna en móvil */
    }
 }

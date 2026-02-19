@@ -22,9 +22,9 @@ const Clientes = ({ onBack }) => {
                 .from("clientes")
                 .select(
                     `
-            *,
-            presupuestos ( total )
-        `,
+                    *,
+                    presupuestos ( total )
+                `,
                 )
                 .eq("user_id", user.id)
                 .order("nombre", { ascending: true });
@@ -51,7 +51,7 @@ const Clientes = ({ onBack }) => {
     };
 
     const handleDelete = async (id, e) => {
-        e.stopPropagation(); // Evita que el clic dispare otras cosas si agregamos "Ver detalle"
+        e.stopPropagation();
         if (!window.confirm("¿Borrar cliente y todo su historial?")) return;
 
         try {
@@ -73,7 +73,7 @@ const Clientes = ({ onBack }) => {
 
     return (
         <div className={styles.container}>
-            {/* BARRA DE HERRAMIENTAS (No Header) */}
+            {/* BARRA DE HERRAMIENTAS */}
             <div className={styles.toolbar}>
                 <button onClick={onBack} className={styles.backBtn}>
                     Esc
@@ -104,7 +104,7 @@ const Clientes = ({ onBack }) => {
                 <div className={styles.grid}>
                     {filtrados.map((cliente) => (
                         <div key={cliente.id} className={styles.card}>
-                            {/* CABECERA DE LA TARJETA */}
+                            {/* CABECERA */}
                             <div className={styles.cardTop}>
                                 <div className={styles.avatar}>
                                     {cliente.nombre.charAt(0).toUpperCase()}
@@ -126,7 +126,7 @@ const Clientes = ({ onBack }) => {
                                 </button>
                             </div>
 
-                            {/* CUERPO DE LA TARJETA (Datos de contacto) */}
+                            {/* CUERPO */}
                             <div className={styles.cardBody}>
                                 {cliente.telefono ? (
                                     <div className={styles.contactRow}>
@@ -153,7 +153,7 @@ const Clientes = ({ onBack }) => {
                                 )}
                             </div>
 
-                            {/* PIE DE LA TARJETA (Dinero) */}
+                            {/* PIE (Dinero) */}
                             <div className={styles.cardFooter}>
                                 <div className={styles.statBox}>
                                     <span className={styles.statLabel}>

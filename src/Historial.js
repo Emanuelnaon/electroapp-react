@@ -4,111 +4,106 @@ import toast from "react-hot-toast";
 import styles from "./Historial.module.css";
 
 const Historial = ({ onBack }) => {
-    const [presupuestos, setPresupuestos] = useState([]);
+    const [lista, setLista] = useState([]);
     const [loading, setLoading] = useState(true);
     const [busqueda, setBusqueda] = useState("");
 
+    // Cargar datos al iniciar
     useEffect(() => {
-        fetchPresupuestos();
+        cargarPresupuestos();
     }, []);
 
-    const fetchPresupuestos = async () => {
+    const cargarPresupuestos = async () => {
         try {
-            const {
-                data: { user },
-            } = await supabase.auth.getUser();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
 
-            // Traemos presupuestos y hacemos el "join" con clientes para tener el nombre
+            // Traemos el presupuesto y el nombre del cliente asociado
             const { data, error } = await supabase
-                .from("presupuestos")
-                .select(
-                    `
+                .from('presupuestos')
+                .select(`
                     *,
                     clientes ( nombre )
-                `,
-                )
-                .eq("user_id", user.id)
-                .order("created_at", { ascending: false });
+                `)
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
 
             if (error) throw error;
-            setPresupuestos(data);
+            setLista(data);
         } catch (error) {
-            toast.error("Error al cargar historial");
+            console.error(error);
+            toast.error("Error cargando historial");
         } finally {
             setLoading(false);
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm("¿Eliminar este presupuesto del historial?"))
-            return;
+    const borrarPresupuesto = async (id) => {
+        if(!window.confirm("¿Seguro que quieres borrar este presupuesto?")) return;
+
         try {
-            const { error } = await supabase
-                .from("presupuestos")
-                .delete()
-                .eq("id", id);
+            const { error } = await supabase.from('presupuestos').delete().eq('id', id);
             if (error) throw error;
-            setPresupuestos(presupuestos.filter((p) => p.id !== id));
-            toast.success("Presupuesto eliminado");
+            
+            // Actualizar lista visualmente
+            setLista(lista.filter(item => item.id !== id));
+            toast.success("Eliminado correctamente");
         } catch (error) {
-            toast.error("No se pudo eliminar");
+            toast.error("Error al eliminar");
         }
     };
 
-    const filtrados = presupuestos.filter((p) =>
-        p.clientes?.nombre.toLowerCase().includes(busqueda.toLowerCase()),
+    // Filtrar por nombre de cliente
+    const filtrados = lista.filter(item => 
+        item.clientes?.nombre?.toLowerCase().includes(busqueda.toLowerCase())
     );
 
     return (
         <div className={styles.container}>
-            <div className={styles.header}>
-                <button onClick={onBack} className={styles.backButton}>
-                    ← Volver
-                </button>
+            {/* ENCABEZADO */}
+            <div className={styles.topBar}>
+                <button onClick={onBack} className={styles.backBtn}>← Volver</button>
                 <h2 className={styles.title}>Historial de Presupuestos</h2>
             </div>
 
-            <div className={styles.searchBar}>
-                <input
-                    type="text"
-                    placeholder="🔍 Buscar por nombre de cliente..."
-                    value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
-                    className={styles.searchInput}
-                />
-            </div>
+            {/* BUSCADOR */}
+            <input 
+                type="text" 
+                placeholder="🔍 Buscar por cliente..." 
+                className={styles.searchInput}
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+            />
 
-            {loading ? (
-                <p>Cargando registros...</p>
-            ) : (
-                <div className={styles.list}>
+            {/* LISTA */}
+            {loading ? <p className={styles.loading}>Cargando...</p> : (
+                <div className={styles.grid}>
+                    {filtrados.length === 0 && <p>No hay presupuestos guardados.</p>}
+                    
                     {filtrados.map((p) => (
                         <div key={p.id} className={styles.card}>
-                            <div className={styles.cardMain}>
-                                <span className={styles.date}>
-                                    {new Date(p.fecha).toLocaleDateString()}
-                                </span>
+                            <div className={styles.cardInfo}>
+                                <div className={styles.cardHeader}>
+                                    <span className={styles.date}>{p.fecha}</span>
+                                    <span className={styles.idBadge}>#{p.id}</span>
+                                </div>
                                 <h3 className={styles.clientName}>
-                                    {p.clientes?.nombre || "Cliente eliminado"}
+                                    {p.clientes?.nombre || "Cliente Eliminado"}
                                 </h3>
                                 <p className={styles.total}>
-                                    Total:{" "}
-                                    <strong>${p.total.toLocaleString()}</strong>
+                                    Total: <span>${p.total?.toLocaleString()}</span>
+                                </p>
+                                <p className={styles.itemCount}>
+                                    {p.items?.length || 0} items en la lista
                                 </p>
                             </div>
-                            <div className={styles.cardActions}>
-                                <button
-                                    className={styles.btnView}
-                                    onClick={() =>
-                                        alert("Re-impresión en desarrollo")
-                                    }
-                                >
+                            
+                            <div className={styles.actions}>
+                                {/* En el futuro aquí pondremos "Ver / Editar" */}
+                                <button className={styles.btnAction} onClick={() => toast("Función Ver/Editar pronto...")}>
                                     👁️ Ver
                                 </button>
-                                <button
-                                    className={styles.btnDelete}
-                                    onClick={() => handleDelete(p.id)}
-                                >
+                                <button className={styles.btnDelete} onClick={() => borrarPresupuesto(p.id)}>
                                     🗑️
                                 </button>
                             </div>

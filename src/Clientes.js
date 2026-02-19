@@ -16,7 +16,6 @@ const Clientes = ({ onBack }) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      // AQUÍ ESTÁ EL TRUCO: Traemos al cliente Y sus presupuestos
       const { data, error } = await supabase
         .from('clientes')
         .select(`
@@ -28,7 +27,6 @@ const Clientes = ({ onBack }) => {
 
       if (error) throw error;
 
-      // Calculamos los totales en Javascript para mostrarlos
       const clientesConTotales = data.map(cliente => {
         const totalGastado = cliente.presupuestos?.reduce((sum, p) => sum + (p.total || 0), 0) || 0;
         const cantidadPresupuestos = cliente.presupuestos?.length || 0;
@@ -44,8 +42,10 @@ const Clientes = ({ onBack }) => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("¿Borrar cliente? Se borrarán también sus presupuestos.")) return;
+  const handleDelete = async (id, e) => {
+    e.stopPropagation(); // Evita que el clic dispare otras cosas si agregamos "Ver detalle"
+    if (!window.confirm("¿Borrar cliente y todo su historial?")) return;
+    
     try {
       const { error } = await supabase.from('clientes').delete().eq('id', id);
       if (error) throw error;
@@ -62,73 +62,98 @@ const Clientes = ({ onBack }) => {
 
   return (
     <div className={styles.container}>
-      {/* HEADER */}
-      <div className={styles.topBar}>
-        <button onClick={onBack} className={styles.backBtn}>← Volver</button>
-        <h2 className={styles.title}>Mis Clientes</h2>
-      </div>
-
-      {/* BUSCADOR */}
-      <div className={styles.searchContainer}>
-        <input
-          type="text"
-          placeholder="🔍 Buscar cliente..."
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-          className={styles.searchInput}
-        />
-        <div className={styles.statsBadge}>
-          {clientes.length} Clientes
+      
+      {/* BARRA DE HERRAMIENTAS (No Header) */}
+      <div className={styles.toolbar}>
+        <button onClick={onBack} className={styles.backBtn}>
+            Esc
+        </button>
+        <div className={styles.searchWrapper}>
+            <span className={styles.searchIcon}>🔍</span>
+            <input
+            type="text"
+            placeholder="Buscar cliente..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            className={styles.searchInput}
+            />
         </div>
       </div>
 
-      {/* LISTA */}
+      {/* TITULO DE SECCIÓN */}
+      <div className={styles.sectionHeader}>
+        <h2 className={styles.title}>Cartera de Clientes ({clientes.length})</h2>
+      </div>
+
+      {/* GRID DE TARJETAS */}
       {loading ? (
-        <div className={styles.loading}>Cargando cartera...</div>
+        <div className={styles.loading}>Cargando datos...</div>
       ) : (
         <div className={styles.grid}>
           {filtrados.map((cliente) => (
             <div key={cliente.id} className={styles.card}>
               
-              <div className={styles.cardMain}>
+              {/* CABECERA DE LA TARJETA */}
+              <div className={styles.cardTop}>
                 <div className={styles.avatar}>
                    {cliente.nombre.charAt(0).toUpperCase()}
                 </div>
-                <div className={styles.info}>
-                  <h3 className={styles.name}>{cliente.nombre}</h3>
-                  {cliente.telefono && <p className={styles.detail}>📞 {cliente.telefono}</p>}
-                  {cliente.email && <p className={styles.detail}>✉️ {cliente.email}</p>}
+                <div className={styles.cardHeaderInfo}>
+                    <h3 className={styles.name}>{cliente.nombre}</h3>
+                    <span className={styles.clientId}>ID: {cliente.id}</span>
                 </div>
+                <button 
+                    onClick={(e) => handleDelete(cliente.id, e)} 
+                    className={styles.deleteBtn}
+                    title="Eliminar"
+                >
+                    ✕
+                </button>
               </div>
 
-              {/* SECCIÓN NUEVA: ESTADÍSTICAS FINANCIERAS */}
-              <div className={styles.financials}>
-                <div className={styles.statItem}>
+              {/* CUERPO DE LA TARJETA (Datos de contacto) */}
+              <div className={styles.cardBody}>
+                {cliente.telefono ? (
+                    <div className={styles.contactRow}>
+                        <span>📞</span> {cliente.telefono}
+                    </div>
+                ) : (
+                    <div className={`${styles.contactRow} ${styles.missing}`}>
+                        <span>📞</span> Sin teléfono
+                    </div>
+                )}
+                
+                {cliente.email ? (
+                    <div className={styles.contactRow}>
+                        <span>✉️</span> {cliente.email}
+                    </div>
+                ) : (
+                    <div className={`${styles.contactRow} ${styles.missing}`}>
+                        <span>✉️</span> Sin email
+                    </div>
+                )}
+              </div>
+
+              {/* PIE DE LA TARJETA (Dinero) */}
+              <div className={styles.cardFooter}>
+                <div className={styles.statBox}>
                     <span className={styles.statLabel}>Trabajos</span>
-                    <span className={styles.statValue}>{cliente.cantidadPresupuestos}</span>
+                    <span className={styles.statNumber}>{cliente.cantidadPresupuestos}</span>
                 </div>
-                <div className={styles.statItem}>
-                    <span className={styles.statLabel}>Facturado</span>
-                    <span className={styles.statValueMoney}>
-                        ${cliente.totalGastado.toLocaleString()}
-                    </span>
+                <div className={styles.divider}></div>
+                <div className={styles.statBox}>
+                    <span className={styles.statLabel}>Total Facturado</span>
+                    <span className={styles.statMoney}>${cliente.totalGastado.toLocaleString()}</span>
                 </div>
               </div>
 
-              <button 
-                onClick={() => handleDelete(cliente.id)} 
-                className={styles.deleteBtn}
-                title="Eliminar Cliente"
-              >
-                🗑️
-              </button>
             </div>
           ))}
-          
-          {filtrados.length === 0 && (
-            <p className={styles.emptyState}>No se encontraron clientes.</p>
-          )}
         </div>
+      )}
+
+      {!loading && filtrados.length === 0 && (
+        <p className={styles.emptyState}>No se encontraron clientes.</p>
       )}
     </div>
   );

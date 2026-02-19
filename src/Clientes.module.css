@@ -1,186 +1,264 @@
+/* CONTENEDOR PRINCIPAL */
 .container {
     padding: 20px;
-    max-width: 800px; /* Un poco más ancho para que quepan los datos */
+    max-width: 1200px;
     margin: 0 auto;
-    animation: fade in 0.3s;
+    animation: fadeIn 0.4s ease;
 }
 
-.topBar {
+/* BARRA DE HERRAMIENTAS SUPERIOR */
+.toolbar {
     display: flex;
-    align-items: center;
     gap: 15px;
-    margin-bottom: 20px;
-}
-
-.title {
-    margin: 0;
-    color: #131517;
-    font-size: 1.8rem;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
 .backBtn {
-    background: none;
-    border: 1px solid #ccc;
-    padding: 8px 12px;
-    border-radius: 8px;
+    background-color: #ef4444; /* Rojo tipo botón ESC */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-weight: bold;
     cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.searchContainer {
+.searchWrapper {
+    flex: 1;
+    position: relative;
     display: flex;
-    gap: 10px;
-    margin-bottom: 25px;
+    align-items: center;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 12px;
+    color: #a0aec0;
 }
 
 .searchInput {
-    flex: 1;
-    padding: 12px;
+    width: 100%;
+    padding: 12px 12px 12px 40px; /* Espacio para la lupa */
+    border: 1px solid #cbd5e0;
     border-radius: 8px;
-    border: 1px solid #ccc;
     font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s;
 }
 
-.statsBadge {
-    background: #edf2f7;
-    padding: 0 15px;
-    display: flex;
-    align-items: center;
-    border-radius: 8px;
-    font-weight: bold;
-    color: #4a5568;
+.searchInput:focus {
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
 }
 
-/* GRID DE TARJETAS */
+.title {
+    color: #2d3748;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    border-left: 5px solid #3182ce; /* Línea azul decorativa */
+    padding-left: 15px;
+}
+
+/* --- GRID SYSTEM (TARJETAS ENCASILLADAS) --- */
 .grid {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    display: grid;
+    /* Esto crea columnas automáticas. Minimo 300px por tarjeta */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
 }
 
+/* --- DISEÑO DE LA TARJETA --- */
 .card {
     background: white;
-    border: 1px solid #e2e8f0;
     border-radius: 12px;
-    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    overflow: hidden; /* Para que el borde redondeado corte el contenido */
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    flex-wrap: wrap; /* Para móvil */
-    gap: 15px;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.cardMain {
+.card:hover {
+    transform: translateY(-5px); /* Se levanta un poco al pasar el mouse */
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* PARTE DE ARRIBA (Foto y Nombre) */
+.cardTop {
+    padding: 20px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 15px;
-    flex: 1;
-    min-width: 200px;
+    position: relative;
 }
 
 .avatar {
-    width: 45px;
-    height: 45px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
     color: white;
-    border-radius: 50%;
+    border-radius: 12px; /* Cuadrado redondeado moderno */
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.5rem;
     font-weight: bold;
-    font-size: 1.2rem;
+    box-shadow: 0 2px 5px rgba(49, 130, 206, 0.4);
 }
 
-.info {
-    display: flex;
-    flex-direction: column;
+.cardHeaderInfo {
+    flex: 1;
 }
 
 .name {
     margin: 0;
-    font-size: 1.1rem;
-    color: #2d3748;
+    font-size: 1.2rem;
+    color: #1a202c;
+    font-weight: 700;
 }
 
-.detail {
-    margin: 0;
-    font-size: 0.85rem;
-    color: #718096;
+.clientId {
+    font-size: 0.75rem;
+    color: #a0aec0;
+    text-transform: uppercase;
 }
 
-/* --- ESTADISTICAS NUEVAS --- */
-.financials {
+.deleteBtn {
+    background: transparent;
+    border: none;
+    color: #cbd5e0;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 0;
+}
+
+.deleteBtn:hover {
+    color: #ef4444; /* Rojo al pasar el mouse */
+}
+
+/* PARTE DEL MEDIO (Datos) */
+.cardBody {
+    padding: 0 20px 20px 20px;
+    flex: 1; /* Empuja el footer hacia abajo */
+}
+
+.contactRow {
     display: flex;
-    gap: 20px;
-    background: #f7fafc;
-    padding: 8px 15px;
-    border-radius: 8px;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    color: #4a5568;
+    font-size: 0.95rem;
 }
 
-.statItem {
+.missing {
+    color: #cbd5e0;
+    font-style: italic;
+}
+
+/* PARTE DE ABAJO (Footer con Dinero) */
+.cardFooter {
+    background-color: #f7fafc;
+    border-top: 1px solid #e2e8f0;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.statBox {
     display: flex;
     flex-direction: column;
-    align-items: center;
 }
 
 .statLabel {
     font-size: 0.7rem;
     text-transform: uppercase;
-    color: #a0aec0;
-    font-weight: bold;
+    color: #718096;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
-.statValue {
+.statNumber {
     font-weight: bold;
-    color: #4a5568;
+    color: #2d3748;
+    font-size: 1.1rem;
 }
 
-.statValueMoney {
+.statMoney {
     font-weight: 800;
     color: #48bb78; /* Verde dinero */
+    font-size: 1.1rem;
 }
 
-.deleteBtn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    padding: 5px;
-    opacity: 0.6;
-    transition: opacity 0.2s;
-}
-
-.deleteBtn:hover {
-    opacity: 1;
-    transform: scale(1.1);
+.divider {
+    width: 1px;
+    height: 30px;
+    background-color: #cbd5e0;
 }
 
 /* =========================================
-   MODO OSCURO (Clientes)
+   MODO OSCURO (Midnight Blue & Gold)
    ========================================= */
-:global(body[data-theme='dark']) .title { color: #2a7fd5; }
-:global(body[data-theme='dark']) .backBtn { color: white; border-color: #555; }
-:global(body[data-theme='dark']) .searchInput { background: #1f2937; border-color: #374151; color: white; }
-:global(body[data-theme='dark']) .statsBadge { background: #2d3748; color: #a0aec0; }
+
+:global(body[data-theme='dark']) .title { 
+    color: #ffffff; 
+    border-left-color: #FFD700; 
+}
+
+:global(body[data-theme='dark']) .searchInput {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: white;
+}
 
 :global(body[data-theme='dark']) .card {
-    background: #191970; /* Azul Medianoche */
-    border-color: #2d3748;
+    background-color: #191970; /* Fondo Azul Profundo */
+    border-color: #2a4365;
 }
 
-:global(body[data-theme='dark']) .name { color: #fff; }
-:global(body[data-theme='dark']) .detail { color: #cbd5e0; }
+:global(body[data-theme='dark']) .name { color: #ffffff; }
+:global(body[data-theme='dark']) .clientId { color: #a0aec0; }
+:global(body[data-theme='dark']) .contactRow { color: #e2e8f0; }
+:global(body[data-theme='dark']) .missing { color: #4a5568; }
 
-:global(body[data-theme='dark']) .financials {
-    background: rgba(0,0,0,0.2); /* Fondo oscuro para stats */
+/* Avatar en modo oscuro */
+:global(body[data-theme='dark']) .avatar {
+    background: linear-gradient(135deg, #FFD700 0%, #d69e2e 100%); /* Dorado */
+    color: #1a202c; /* Letra negra */
+    box-shadow: 0 2px 5px rgba(255, 215, 0, 0.3);
 }
-:global(body[data-theme='dark']) .statValue { color: #fff; }
-:global(body[data-theme='dark']) .statValueMoney { color: #FFD700; } /* Amarillo para el dinero */
 
-/* MÓVIL */
+/* Footer en modo oscuro */
+:global(body[data-theme='dark']) .cardFooter {
+    background-color: rgba(0, 0, 0, 0.2); /* Más oscuro que la tarjeta */
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(body[data-theme='dark']) .statLabel { color: #a0aec0; }
+:global(body[data-theme='dark']) .statNumber { color: #fff; }
+:global(body[data-theme='dark']) .statMoney { color: #FFD700; } /* Total en Dorado */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive para móvil */
 @media (max-width: 600px) {
-    .card { flex-direction: column; align-items: flex-start; }
-    .financials { width: 100%; justify-content: space-around; }
-    .cardMain { width: 100%; }
-    .deleteBtn { width: 100%; text-align: right; background: rgba(255,0,0,0.1); padding: 10px; border-radius: 6px; }
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .backBtn {
+        width: 100%;
+        text-align: center;
+    }
+    .grid {
+        grid-template-columns: 1fr; /* Una columna en móvil */
+    }
 }

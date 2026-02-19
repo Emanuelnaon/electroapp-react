@@ -11,9 +11,8 @@ import { supabase } from "./supabaseClient";
 import ScrollToTop from "./ScrollToTop";
 import Cotizador from "./Cotizador";
 import Clientes from "./Clientes";
-import DashboardHome from "./DashboardHome"; // Importamos el dashboard que arreglamos antes
-import Historial from "./Historial"; // Importamos el historial de presupuestos
-
+import DashboardHome from "./DashboardHome";
+import Historial from "./Historial";
 
 const ADMIN_EMAIL = "emanuelnaon@gmail.com";
 
@@ -23,11 +22,7 @@ function App() {
     const [loading, setLoading] = useState(true);
     const [showLogin, setShowLogin] = useState(false);
     const [showSuperAdminPanel, setShowSuperAdminPanel] = useState(false);
-
-    // ✅ CORREGIDO AQUÍ: Definimos currentView y setCurrentView
     const [currentView, setCurrentView] = useState("dashboard");
-
-    // Estado para modo oscuro
     const [darkMode, setDarkMode] = useState(false);
 
     // EFECTO: MODO OSCURO
@@ -41,23 +36,19 @@ function App() {
 
     // EFECTO: AUTENTICACIÓN
     useEffect(() => {
-        // Detectar si entra por /admin
         if (window.location.pathname === "/admin") {
             setShowLogin(true);
         }
 
-        // Verificar sesión actual
         supabase.auth.getSession().then(({ data: { session } }) => {
             setUser(session?.user ?? null);
             setLoading(false);
         });
 
-        // Escuchar cambios de sesión
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null);
-            // Redirigir si se loguea en /admin
             if (session?.user && window.location.pathname === "/admin") {
                 window.location.href = "/";
             }
@@ -70,58 +61,8 @@ function App() {
     const handleLogout = async () => {
         await supabase.auth.signOut();
         setUser(null);
-        setCurrentView("dashboard"); // Volver al inicio al salir
-    };
-
-    // LÓGICA PARA MOSTRAR CONTENIDO (ROUTER INTERNO)
-    const renderDashboard = () => {
-        const isSuperAdmin = user?.email === ADMIN_EMAIL;
-
-        // 1. Si eligió COTIZADOR
-        if (currentView === "cotizador") {
-            return <Cotizador onBack={() => setCurrentView("dashboard")} />;
-        }
-
-        // 2. Si eligió CLIENTES
-        if (currentView === "clientes") {
-            return <Clientes onBack={() => setCurrentView("dashboard")} />;
-        }
-
-            // 3. Si eligió HISTORIAL
-        if (currentView === "historial") {
-            return <Historial onBack={() => setCurrentView("dashboard")} />;
-        }
-
-        // 3. Si eligió ADMIN PANEL (Solo Super Admin)
-        if (isSuperAdmin && showSuperAdminPanel) {
-            return (
-                <div className={styles.adminSection}>
-                    <button
-                        onClick={() => setShowSuperAdminPanel(false)}
-                        style={{
-                            marginBottom: "20px",
-                            cursor: "pointer",
-                            padding: "10px",
-                        }}
-                    >
-                        ← Volver al Menú
-                    </button>
-                    <EmailDashboard />
-                </div>
-            );
-        }
-
-        // 4. POR DEFECTO: MOSTRAR EL MENÚ PRINCIPAL (DashboardHome)
-        return (
-            <DashboardHome
-                user={user}
-                isSuperAdmin={isSuperAdmin}
-                onOpenWaitlist={() => setShowSuperAdminPanel(true)}
-                onOpenCotizador={() => setCurrentView("cotizador")}
-                onOpenClientes={() => setCurrentView("clientes")} // Conectamos el botón
-                onOpenHistorial={() => setCurrentView("historial")} // Conectamos el botón de historial
-            />
-        );
+        setCurrentView("dashboard");
+        setShowSuperAdminPanel(false);
     };
 
     // RENDERIZADO PRINCIPAL
@@ -139,8 +80,7 @@ function App() {
         return (
             <div>
                 <Header
-                    titulo="ElectroApp"
-                    subtitulo="Un sistema de gestión gratis para electricistas."
+                    title="ElectroApp" // Usamos "title" con el nuevo Header
                     darkMode={darkMode}
                     toggleDarkMode={() => setDarkMode(!darkMode)}
                 />
@@ -149,7 +89,6 @@ function App() {
                     <h2 className={styles.sectionTitle}>
                         ¿Por qué ElectroApp?
                     </h2>
-
                     <div className={styles.benefitsGrid}>
                         <BenefitCard
                             emoji="📋"
@@ -185,38 +124,74 @@ function App() {
                         </button>
                     </div>
                 </main>
-
                 <Footer />
                 <Toaster position="top-right" />
             </div>
         );
     }
 
-    // PANTALLA PRIVADA (DASHBOARD - LOGUEADO)
+    // ==========================================
+    // LÓGICA DE PANTALLA PRIVADA (LOGUEADO)
+    // ==========================================
+
+    const isSuperAdmin = user?.email === ADMIN_EMAIL;
+
+    // 1. Configuramos dinámicamente qué Título y qué Botón de Volver mostrar en el Header
+    let headerTitle = "Panel de Control";
+    let handleBack = null; // Si es null, el Header muestra el Logo
+
+    if (showSuperAdminPanel) {
+        headerTitle = "Panel de Super Admin";
+        handleBack = () => setShowSuperAdminPanel(false);
+    } else if (currentView === "cotizador") {
+        headerTitle = "Nuevo Presupuesto";
+        handleBack = () => setCurrentView("dashboard");
+    } else if (currentView === "clientes") {
+        headerTitle = "Cartera de Clientes";
+        handleBack = () => setCurrentView("dashboard");
+    } else if (currentView === "historial") {
+        headerTitle = "Historial de Presupuestos";
+        handleBack = () => setCurrentView("dashboard");
+    }
+
+    // 2. Renderizamos solo el "Cuerpo" de la vista actual
+    const renderDashboardContent = () => {
+        if (isSuperAdmin && showSuperAdminPanel) {
+            return (
+                <div className={styles.adminSection}>
+                    <EmailDashboard />
+                </div>
+            );
+        }
+        if (currentView === "cotizador") return <Cotizador />;
+        if (currentView === "clientes") return <Clientes />;
+        if (currentView === "historial") return <Historial />;
+
+        return (
+            <DashboardHome
+                user={user}
+                isSuperAdmin={isSuperAdmin}
+                onOpenWaitlist={() => setShowSuperAdminPanel(true)}
+                onOpenCotizador={() => setCurrentView("cotizador")}
+                onOpenClientes={() => setCurrentView("clientes")}
+                onOpenHistorial={() => setCurrentView("historial")}
+            />
+        );
+    };
+
     return (
         <>
+            {/* UN SOLO HEADER INTELIGENTE PARA TODO */}
             <Header
-                titulo="ElectroApp"
-                subtitulo="Panel de Gestión Profesional"
+                title={headerTitle}
+                user={user}
+                onLogout={handleLogout}
+                onBack={handleBack}
                 darkMode={darkMode}
                 toggleDarkMode={() => setDarkMode(!darkMode)}
             />
 
-            <main className={styles.main}>
-                <div className={`${styles.sessionBar} no-print-global`}>
-                    <span>
-                        👤 Sesión: <strong>{user.email}</strong>
-                    </span>
-                    <button
-                        onClick={handleLogout}
-                        className={styles.logoutButton}
-                    >
-                        Cerrar Sesión
-                    </button>
-                </div>
-
-                {renderDashboard()}
-            </main>
+            <main className={styles.main}>{renderDashboardContent()}</main>
 
             <Footer />
             <ScrollToTop />

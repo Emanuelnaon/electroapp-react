@@ -1,180 +1,281 @@
+/* CONTENEDOR PRINCIPAL */
 .container {
-   padding: 10px;
-   width: 100%;
+   padding: 20px;
+   max-width: 1200px;
+   margin: 0 auto;
    animation: fadeIn 0.4s ease;
 }
 
-/* Header */
-.header {
+/* BARRA DE HERRAMIENTAS SUPERIOR */
+.toolbar {
+   display: flex;
+   gap: 15px;
+   align-items: center;
+   margin-bottom: 30px;
+}
+
+.backBtn {
+   background-color: #ef4444;
+   /* Rojo tipo botón ESC */
+   color: white;
+   border: none;
+   border-radius: 6px;
+   padding: 10px 15px;
+   font-weight: bold;
+   cursor: pointer;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.searchWrapper {
+   flex: 1;
+   position: relative;
    display: flex;
    align-items: center;
-   gap: 20px;
-   margin-bottom: 30px;
 }
 
-.backButton {
-   background: transparent;
-   border: 1px solid var(--card-border);
-   color: var(--text-color);
-   padding: 8px 16px;
-   border-radius: 8px;
-   cursor: pointer;
-   font-weight: 600;
-   transition: background 0.2s;
-}
-
-.backButton:hover {
-   background-color: var(--card-shadow);
-}
-
-.title {
-   margin: 0;
-   font-size: 1.8rem;
-   color: var(--text-color);
-}
-
-.subtitle {
-   margin: 0;
-   font-size: 0.9rem;
-   color: var(--text-secondary);
-}
-
-/* Buscador */
-.searchContainer {
-   margin-bottom: 30px;
+.searchIcon {
+   position: absolute;
+   left: 12px;
+   color: #a0aec0;
 }
 
 .searchInput {
    width: 100%;
-   padding: 15px;
-   font-size: 1rem;
-   border: 2px solid var(--card-border);
-   background-color: var(--card-bg);
-   color: var(--text-color);
-   border-radius: 12px;
+   padding: 12px 12px 12px 40px;
+   /* Espacio para la lupa */
+   border: 1px solid #cbd5e0;
+   border-radius: 8px;
+   font-size: 16px;
    outline: none;
    transition: border-color 0.2s;
 }
 
 .searchInput:focus {
-   border-color: var(--accent-color);
+   border-color: #3182ce;
+   box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
 }
 
-/* Grilla */
+.title {
+   color: #2d3748;
+   margin-bottom: 20px;
+   font-size: 1.5rem;
+   border-left: 5px solid #3182ce;
+   /* Línea azul decorativa */
+   padding-left: 15px;
+}
+
+/* --- GRID SYSTEM (TARJETAS ENCASILLADAS) --- */
 .grid {
    display: grid;
-   /* Ajuste automático: crea tantas columnas como entren (mínimo 300px cada una) */
-   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+   /* Esto crea columnas automáticas. Minimo 300px por tarjeta */
+   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
    gap: 20px;
 }
 
-/* Tarjeta de Cliente */
+/* --- DISEÑO DE LA TARJETA --- */
 .card {
-   background-color: var(--card-bg);
-   border: 1px solid var(--card-border);
-   border-radius: 16px;
-   padding: 20px;
-   box-shadow: 0 2px 4px var(--card-shadow);
+   background: white;
+   border-radius: 12px;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+   border: 1px solid #e2e8f0;
+   overflow: hidden;
+   /* Para que el borde redondeado corte el contenido */
    display: flex;
    flex-direction: column;
-   justify-content: space-between;
-   transition: transform 0.2s;
+   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .card:hover {
-   transform: translateY(-3px);
-   border-color: var(--accent-color);
+   transform: translateY(-5px);
+   /* Se levanta un poco al pasar el mouse */
+   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
-.cardHeader {
+/* PARTE DE ARRIBA (Foto y Nombre) */
+.cardTop {
+   padding: 20px;
    display: flex;
-   align-items: center;
+   align-items: flex-start;
    gap: 15px;
-   margin-bottom: 15px;
-   padding-bottom: 15px;
-   border-bottom: 1px solid var(--card-border);
+   position: relative;
 }
 
 .avatar {
-   width: 45px;
-   height: 45px;
-   background: linear-gradient(135deg, var(--accent-color) 0%, #4c51bf 100%);
+   width: 50px;
+   height: 50px;
+   background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
    color: white;
-   border-radius: 50%;
+   border-radius: 12px;
+   /* Cuadrado redondeado moderno */
    display: flex;
    align-items: center;
    justify-content: center;
-   font-size: 1.2rem;
+   font-size: 1.5rem;
    font-weight: bold;
+   box-shadow: 0 2px 5px rgba(49, 130, 206, 0.4);
 }
 
-.nombre {
-   margin: 0;
-   font-size: 1.1rem;
-   color: var(--text-color);
-}
-
-.fecha {
-   font-size: 0.8rem;
-   color: var(--text-secondary);
-}
-
-.contactInfo {
-   margin-bottom: 20px;
-}
-
-.dataRow {
-   color: var(--text-secondary);
-   font-size: 0.95rem;
-   margin-bottom: 5px;
-}
-
-/* Botones de acción */
-.actions {
-   display: flex;
-   gap: 10px;
-}
-
-.whatsappBtn {
+.cardHeaderInfo {
    flex: 1;
-   background-color: #25D366;
-   color: white;
-   text-align: center;
-   padding: 10px;
-   border-radius: 8px;
-   text-decoration: none;
-   font-weight: 600;
-   transition: filter 0.2s;
 }
 
-.whatsappBtn:hover {
-   filter: brightness(1.1);
+.name {
+   margin: 0;
+   font-size: 1.2rem;
+   color: #1a202c;
+   font-weight: 700;
+}
+
+.clientId {
+   font-size: 0.75rem;
+   color: #a0aec0;
+   text-transform: uppercase;
 }
 
 .deleteBtn {
    background: transparent;
-   border: 1px solid #feb2b2;
-   color: #e53e3e;
-   padding: 0 12px;
-   border-radius: 8px;
-   cursor: pointer;
+   border: none;
+   color: #cbd5e0;
    font-size: 1.2rem;
-   transition: background 0.2s;
+   cursor: pointer;
+   transition: color 0.2s;
+   padding: 0;
 }
 
 .deleteBtn:hover {
-   background-color: #fff5f5;
+   color: #ef4444;
+   /* Rojo al pasar el mouse */
 }
 
-/* Estados vacíos */
-.loading,
-.emptyState {
-   text-align: center;
-   padding: 40px;
-   color: var(--text-secondary);
-   grid-column: 1 / -1;
-   /* Ocupa todo el ancho si está vacío */
+/* PARTE DEL MEDIO (Datos) */
+.cardBody {
+   padding: 0 20px 20px 20px;
+   flex: 1;
+   /* Empuja el footer hacia abajo */
 }
+
+.contactRow {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   margin-bottom: 8px;
+   color: #4a5568;
+   font-size: 0.95rem;
+}
+
+.missing {
+   color: #cbd5e0;
+   font-style: italic;
+}
+
+/* PARTE DE ABAJO (Footer con Dinero) */
+.cardFooter {
+   background-color: #f7fafc;
+   border-top: 1px solid #e2e8f0;
+   padding: 15px 20px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.statBox {
+   display: flex;
+   flex-direction: column;
+}
+
+.statLabel {
+   font-size: 0.7rem;
+   text-transform: uppercase;
+   color: #718096;
+   font-weight: 600;
+   letter-spacing: 0.5px;
+}
+
+.statNumber {
+   font-weight: bold;
+   color: #2d3748;
+   font-size: 1.1rem;
+}
+
+.statMoney {
+   font-weight: 800;
+   color: #48bb78;
+   /* Verde dinero */
+   font-size: 1.1rem;
+}
+
+.divider {
+   width: 1px;
+   height: 30px;
+   background-color: #cbd5e0;
+}
+
+/* =========================================
+   MODO OSCURO (Midnight Blue & Gold)
+   ========================================= */
+
+:global(body[data-theme='dark']) .title {
+   color: #ffffff;
+   border-left-color: #FFD700;
+}
+
+:global(body[data-theme='dark']) .searchInput {
+   background-color: #1f2937;
+   border-color: #374151;
+   color: white;
+}
+
+:global(body[data-theme='dark']) .card {
+   background-color: #191970;
+   /* Fondo Azul Profundo */
+   border-color: #2a4365;
+}
+
+:global(body[data-theme='dark']) .name {
+   color: #ffffff;
+}
+
+:global(body[data-theme='dark']) .clientId {
+   color: #a0aec0;
+}
+
+:global(body[data-theme='dark']) .contactRow {
+   color: #e2e8f0;
+}
+
+:global(body[data-theme='dark']) .missing {
+   color: #4a5568;
+}
+
+/* Avatar en modo oscuro */
+:global(body[data-theme='dark']) .avatar {
+   background: linear-gradient(135deg, #FFD700 0%, #d69e2e 100%);
+   /* Dorado */
+   color: #1a202c;
+   /* Letra negra */
+   box-shadow: 0 2px 5px rgba(255, 215, 0, 0.3);
+}
+
+/* Footer en modo oscuro */
+:global(body[data-theme='dark']) .cardFooter {
+   background-color: rgba(0, 0, 0, 0.2);
+   /* Más oscuro que la tarjeta */
+   border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+:global(body[data-theme='dark']) .statLabel {
+   color: #a0aec0;
+}
+
+:global(body[data-theme='dark']) .statNumber {
+   color: #fff;
+}
+
+:global(body[data-theme='dark']) .statMoney {
+   color: #FFD700;
+}
+
+/* Total en Dorado */
 
 @keyframes fadeIn {
    from {
@@ -188,14 +289,20 @@
    }
 }
 
+/* Responsive para móvil */
 @media (max-width: 600px) {
-   .grid {
-      grid-template-columns: 1fr;
+   .toolbar {
+      flex-direction: column;
+      align-items: stretch;
    }
 
-   .header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
+   .backBtn {
+      width: 100%;
+      text-align: center;
+   }
+
+   .grid {
+      grid-template-columns: 1fr;
+      /* Una columna en móvil */
    }
 }

@@ -8,7 +8,6 @@ const Clientes = ({ onBack }) => {
     const [loading, setLoading] = useState(true);
     const [busqueda, setBusqueda] = useState("");
 
-    // Cargar clientes al iniciar
     useEffect(() => {
         fetchClientes();
     }, []);
@@ -19,155 +18,168 @@ const Clientes = ({ onBack }) => {
                 data: { user },
             } = await supabase.auth.getUser();
 
-            let query = supabase
+            const { data, error } = await supabase
                 .from("clientes")
-                .select("*")
+                .select(
+                    `
+            *,
+            presupuestos ( total )
+        `,
+                )
                 .eq("user_id", user.id)
-                .order("created_at", { ascending: false }); // Los más nuevos primero
-
-            const { data, error } = await query;
+                .order("nombre", { ascending: true });
 
             if (error) throw error;
-            setClientes(data);
+
+            const clientesConTotales = data.map((cliente) => {
+                const totalGastado =
+                    cliente.presupuestos?.reduce(
+                        (sum, p) => sum + (p.total || 0),
+                        0,
+                    ) || 0;
+                const cantidadPresupuestos = cliente.presupuestos?.length || 0;
+                return { ...cliente, totalGastado, cantidadPresupuestos };
+            });
+
+            setClientes(clientesConTotales);
         } catch (error) {
-            toast.error("Error al cargar clientes");
             console.error(error);
+            toast.error("Error al cargar clientes");
         } finally {
             setLoading(false);
         }
     };
 
-    // Función para borrar cliente
-    const handleDelete = async (id, nombre) => {
-        if (!window.confirm(`¿Estás seguro de eliminar a ${nombre}?`)) return;
+    const handleDelete = async (id, e) => {
+        e.stopPropagation(); // Evita que el clic dispare otras cosas si agregamos "Ver detalle"
+        if (!window.confirm("¿Borrar cliente y todo su historial?")) return;
 
         try {
             const { error } = await supabase
                 .from("clientes")
                 .delete()
                 .eq("id", id);
-
             if (error) throw error;
-
             setClientes(clientes.filter((c) => c.id !== id));
             toast.success("Cliente eliminado");
         } catch (error) {
-            toast.error("No se pudo eliminar");
+            toast.error("Error al eliminar");
         }
     };
 
-    // Filtrado en tiempo real
-    const clientesFiltrados = clientes.filter(
-        (c) =>
-            c.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-            (c.telefono && c.telefono.includes(busqueda)),
+    const filtrados = clientes.filter((c) =>
+        c.nombre.toLowerCase().includes(busqueda.toLowerCase()),
     );
 
     return (
         <div className={styles.container}>
-            {/* ENCABEZADO */}
-            <div className={styles.header}>
-                <button onClick={onBack} className={styles.backButton}>
-                    ← Volver
+            {/* BARRA DE HERRAMIENTAS (No Header) */}
+            <div className={styles.toolbar}>
+                <button onClick={onBack} className={styles.backBtn}>
+                    Esc
                 </button>
-                <div>
-                    <h2 className={styles.title}>Cartera de Clientes</h2>
-                    <p className={styles.subtitle}>
-                        {clientes.length} contactos guardados
-                    </p>
+                <div className={styles.searchWrapper}>
+                    <span className={styles.searchIcon}>🔍</span>
+                    <input
+                        type="text"
+                        placeholder="Buscar cliente..."
+                        value={busqueda}
+                        onChange={(e) => setBusqueda(e.target.value)}
+                        className={styles.searchInput}
+                    />
                 </div>
             </div>
 
-            {/* BUSCADOR */}
-            <div className={styles.searchContainer}>
-                <input
-                    type="text"
-                    placeholder="🔍 Buscar por nombre o teléfono..."
-                    className={styles.searchInput}
-                    value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
-                    autoFocus
-                />
+            {/* TITULO DE SECCIÓN */}
+            <div className={styles.sectionHeader}>
+                <h2 className={styles.title}>
+                    Cartera de Clientes ({clientes.length})
+                </h2>
             </div>
 
-            {/* LISTA DE TARJETAS */}
+            {/* GRID DE TARJETAS */}
             {loading ? (
-                <div className={styles.loading}>Cargando agenda...</div>
+                <div className={styles.loading}>Cargando datos...</div>
             ) : (
                 <div className={styles.grid}>
-                    {clientesFiltrados.map((cliente) => (
+                    {filtrados.map((cliente) => (
                         <div key={cliente.id} className={styles.card}>
-                            <div className={styles.cardHeader}>
+                            {/* CABECERA DE LA TARJETA */}
+                            <div className={styles.cardTop}>
                                 <div className={styles.avatar}>
                                     {cliente.nombre.charAt(0).toUpperCase()}
                                 </div>
-                                <div className={styles.info}>
-                                    <h3 className={styles.nombre}>
+                                <div className={styles.cardHeaderInfo}>
+                                    <h3 className={styles.name}>
                                         {cliente.nombre}
                                     </h3>
-                                    <span className={styles.fecha}>
-                                        Alta:{" "}
-                                        {new Date(
-                                            cliente.created_at,
-                                        ).toLocaleDateString()}
+                                    <span className={styles.clientId}>
+                                        ID: {cliente.id}
                                     </span>
                                 </div>
+                                <button
+                                    onClick={(e) => handleDelete(cliente.id, e)}
+                                    className={styles.deleteBtn}
+                                    title="Eliminar"
+                                >
+                                    ✕
+                                </button>
                             </div>
 
-                            <div className={styles.contactInfo}>
+                            {/* CUERPO DE LA TARJETA (Datos de contacto) */}
+                            <div className={styles.cardBody}>
                                 {cliente.telefono ? (
-                                    <div className={styles.dataRow}>
-                                        📞 {cliente.telefono}
+                                    <div className={styles.contactRow}>
+                                        <span>📞</span> {cliente.telefono}
                                     </div>
                                 ) : (
                                     <div
-                                        className={styles.dataRow}
-                                        style={{ opacity: 0.5 }}
+                                        className={`${styles.contactRow} ${styles.missing}`}
                                     >
-                                        Sin teléfono
+                                        <span>📞</span> Sin teléfono
                                     </div>
                                 )}
-                                {cliente.email && (
-                                    <div className={styles.dataRow}>
-                                        ✉️ {cliente.email}
+
+                                {cliente.email ? (
+                                    <div className={styles.contactRow}>
+                                        <span>✉️</span> {cliente.email}
+                                    </div>
+                                ) : (
+                                    <div
+                                        className={`${styles.contactRow} ${styles.missing}`}
+                                    >
+                                        <span>✉️</span> Sin email
                                     </div>
                                 )}
                             </div>
 
-                            <div className={styles.actions}>
-                                {cliente.telefono && (
-                                    <a
-                                        href={`https://wa.me/${cliente.telefono.replace(/[^0-9]/g, "")}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className={styles.whatsappBtn}
-                                    >
-                                        WhatsApp
-                                    </a>
-                                )}
-                                <button
-                                    onClick={() =>
-                                        handleDelete(cliente.id, cliente.nombre)
-                                    }
-                                    className={styles.deleteBtn}
-                                    title="Eliminar cliente"
-                                >
-                                    🗑️
-                                </button>
+                            {/* PIE DE LA TARJETA (Dinero) */}
+                            <div className={styles.cardFooter}>
+                                <div className={styles.statBox}>
+                                    <span className={styles.statLabel}>
+                                        Trabajos
+                                    </span>
+                                    <span className={styles.statNumber}>
+                                        {cliente.cantidadPresupuestos}
+                                    </span>
+                                </div>
+                                <div className={styles.divider}></div>
+                                <div className={styles.statBox}>
+                                    <span className={styles.statLabel}>
+                                        Total Facturado
+                                    </span>
+                                    <span className={styles.statMoney}>
+                                        ${cliente.totalGastado.toLocaleString()}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     ))}
-
-                    {clientesFiltrados.length === 0 && !loading && (
-                        <div className={styles.emptyState}>
-                            <p>No se encontraron clientes.</p>
-                            <small>
-                                Guarda un presupuesto nuevo para agregar
-                                clientes aquí.
-                            </small>
-                        </div>
-                    )}
                 </div>
+            )}
+
+            {!loading && filtrados.length === 0 && (
+                <p className={styles.emptyState}>No se encontraron clientes.</p>
             )}
         </div>
     );

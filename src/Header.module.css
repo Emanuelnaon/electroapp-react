@@ -1,180 +1,145 @@
-/* Header.module.css - ESTILO INDUSTRIAL ⚡ */
-
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px;
+  height: 70px;
+  /* Altura fija para estabilidad */
+  padding: 0 20px;
   background-color: #131517;
-  /* ⬛ Fondo Negro Intenso */
-  border-bottom: 4px solid #FFD700;
-  /* 🟨 Borde Amarillo grueso (Marca registrada) */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  /* Negro Industrial */
+  border-bottom: 3px solid #FFD700;
+  /* Línea Amarilla */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   position: sticky;
   top: 0;
   z-index: 1000;
+  color: white;
 }
 
-/* --- LOGO Y TÍTULOS --- */
-.logoContainer {
+/* --- IZQUIERDA --- */
+.leftSection {
+  flex: 1;
+  /* Ocupa espacio para equilibrar */
   display: flex;
-  align-items: center;
-  gap: 15px;
+  justify-content: flex-start;
 }
 
 .logoCircle {
-  width: 45px;
-  height: 45px;
-  background-color: #FFD700;
-  /* Círculo Amarillo */
+  width: 40px;
+  height: 40px;
+  background: #FFD700;
+  color: #131517;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: bold;
-  color: #131517;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-  /* Resplandor */
 }
 
-.brandInfo {
+.backButton {
+  background: transparent;
+  border: 1px solid #4a5568;
+  color: #cbd5e0;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.backButton:hover {
+  border-color: #FFD700;
+  color: #FFD700;
+}
+
+/* --- CENTRO (TÍTULO) --- */
+.centerSection {
+  flex: 2;
+  /* Más espacio para el título */
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .title {
-  color: #ffffff;
-  /* Texto Blanco */
   margin: 0;
   font-size: 1.5rem;
   font-weight: 800;
-  letter-spacing: -0.5px;
   text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.subtitle {
-  color: #9ca3af;
-  /* Gris claro */
-  margin: 0;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-/* --- NAVEGACIÓN (Derecha) --- */
-.navBar {
+/* --- DERECHA --- */
+.rightSection {
+  flex: 1;
   display: flex;
-  gap: 20px;
-  align-items: center;
-}
-
-/* Link simple (Beneficios, etc.) */
-.navLink {
-  color: #e5e7eb;
-  /* Blanco suave */
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: color 0.2s;
-  cursor: var(--cursor-electric);
-}
-
-.navLink:hover {
-  color: #FFD700;
-  /* Se ilumina amarillo al pasar el mouse */
-}
-
-/* --- EL BOTÓN PROTAGONISTA: ELECTRICISTAS --- */
-.electricianButton {
-  background-color: #FFD700;
-  /* 🟨 Fondo Amarillo */
-  color: #131517;
-  /* Texto Negro */
-  border: 2px solid #FFD700;
-  padding: 10px 24px;
-  border-radius: 6px;
-  /* Bordes más rectos, más industrial */
-  font-weight: 800;
-  /* Letra muy gruesa */
-  font-size: 0.95rem;
-  cursor: var(--cursor-electric);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.electricianButton:hover {
-  background-color: #ffe033;
-  /* Amarillo más claro */
-  transform: translateY(-2px);
-  /* Se levanta */
-  box-shadow: 0 6px 12px rgba(255, 215, 0, 0.3);
-  /* Sombra amarilla */
-}
-
-.electricianButton:active {
-  transform: translateY(0);
-}
-
-/* --- USUARIO LOGUEADO --- */
-.userMenu {
-  display: flex;
+  justify-content: flex-end;
   align-items: center;
   gap: 15px;
-  background-color: rgba(255, 255, 255, 0.1);
-  /* Fondo translúcido */
-  padding: 5px 15px;
-  border-radius: 50px;
-  border: 1px solid #374151;
+}
+
+.themeToggle {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.themeToggle:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .userBadge {
-  color: #FFD700;
-  /* Usuario en amarillo */
-  font-weight: 600;
   font-size: 0.9rem;
+  color: #a0aec0;
+  font-weight: 500;
+  display: none;
+  /* Ocultar nombre en móvil para espacio */
 }
 
-.navLinkLogout {
-  background: none;
+.logoutBtn {
+  background: #ef4444;
+  color: white;
   border: none;
-  color: #ef4444;
-  /* Rojo alerta */
-  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
   cursor: pointer;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  padding: 5px;
 }
 
-.navLinkLogout:hover {
-  text-decoration: underline;
-  color: #ff6b6b;
+/* RESPONSIVE */
+@media (min-width: 768px) {
+  .userBadge {
+    display: block;
+  }
 }
 
-/* --- RESPONSIVE (Móvil) --- */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
+  .title {
+    font-size: 1.1rem;
+  }
+
+  /* Título más pequeño en celular */
   .header {
-    padding: 15px;
-    flex-direction: column;
-    gap: 15px;
-    text-align: center;
-  }
-
-  .logoContainer {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .navBar {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .subtitle {
-    display: none;
-    /* Ocultamos subtítulo en móvil para ahorrar espacio */
+    padding: 0 10px;
   }
 }

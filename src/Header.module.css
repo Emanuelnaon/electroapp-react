@@ -1,180 +1,144 @@
-/* Header.module.css - ESTILO INDUSTRIAL ⚡ */
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  background-color: #131517;
-  /* ⬛ Fondo Negro Intenso */
-  border-bottom: 4px solid #FFD700;
-  /* 🟨 Borde Amarillo grueso (Marca registrada) */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+.container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    animation: fadeIn 0.3s ease;
 }
 
-/* --- LOGO Y TÍTULOS --- */
-.logoContainer {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.logoCircle {
-  width: 45px;
-  height: 45px;
-  background-color: #FFD700;
-  /* Círculo Amarillo */
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: bold;
-  color: #131517;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-  /* Resplandor */
-}
-
-.brandInfo {
-  display: flex;
-  flex-direction: column;
+.topBar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
 }
 
 .title {
-  color: #ffffff;
-  /* Texto Blanco */
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  text-transform: uppercase;
+    margin: 0;
+    color: #131517;
+    font-size: 1.8rem;
 }
 
-.subtitle {
-  color: #9ca3af;
-  /* Gris claro */
-  margin: 0;
-  font-size: 0.85rem;
-  font-weight: 500;
+.backBtn {
+    background: none;
+    border: 2px solid #ccc;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
-/* --- NAVEGACIÓN (Derecha) --- */
-.navBar {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-
-/* Link simple (Beneficios, etc.) */
-.navLink {
-  color: #e5e7eb;
-  /* Blanco suave */
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: color 0.2s;
-  cursor: var(--cursor-electric);
-}
-
-.navLink:hover {
-  color: #FFD700;
-  /* Se ilumina amarillo al pasar el mouse */
-}
-
-/* --- EL BOTÓN PROTAGONISTA: ELECTRICISTAS --- */
-.electricianButton {
-  background-color: #FFD700;
-  /* 🟨 Fondo Amarillo */
-  color: #131517;
-  /* Texto Negro */
-  border: 2px solid #FFD700;
-  padding: 10px 24px;
-  border-radius: 6px;
-  /* Bordes más rectos, más industrial */
-  font-weight: 800;
-  /* Letra muy gruesa */
-  font-size: 0.95rem;
-  cursor: var(--cursor-electric);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.electricianButton:hover {
-  background-color: #ffe033;
-  /* Amarillo más claro */
-  transform: translateY(-2px);
-  /* Se levanta */
-  box-shadow: 0 6px 12px rgba(255, 215, 0, 0.3);
-  /* Sombra amarilla */
-}
-
-.electricianButton:active {
-  transform: translateY(0);
-}
-
-/* --- USUARIO LOGUEADO --- */
-.userMenu {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  background-color: rgba(255, 255, 255, 0.1);
-  /* Fondo translúcido */
-  padding: 5px 15px;
-  border-radius: 50px;
-  border: 1px solid #374151;
-}
-
-.userBadge {
-  color: #FFD700;
-  /* Usuario en amarillo */
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.navLinkLogout {
-  background: none;
-  border: none;
-  color: #ef4444;
-  /* Rojo alerta */
-  font-weight: 700;
-  cursor: pointer;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  padding: 5px;
-}
-
-.navLinkLogout:hover {
-  text-decoration: underline;
-  color: #ff6b6b;
-}
-
-/* --- RESPONSIVE (Móvil) --- */
-@media (max-width: 768px) {
-  .header {
+.searchInput {
+    width: 100%;
     padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* GRID DE TARJETAS */
+.grid {
+    display: flex;
     flex-direction: column;
     gap: 15px;
-    text-align: center;
-  }
+}
 
-  .logoContainer {
+.card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.cardInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.cardHeader {
+    display: flex;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.clientName {
+    margin: 5px 0;
+    font-size: 1.2rem;
+    color: #2d3748;
+}
+
+.total {
+    font-weight: bold;
+    color: #48bb78; /* Verde dinero */
+    margin: 0;
+}
+
+.itemCount {
+    font-size: 0.8rem;
+    color: #a0aec0;
+    margin: 0;
+}
+
+/* BOTONES */
+.actions {
+    display: flex;
     flex-direction: column;
     gap: 10px;
-  }
+}
 
-  .navBar {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
+.btnAction {
+    background-color: #3182ce;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
 
-  .subtitle {
-    display: none;
-    /* Ocultamos subtítulo en móvil para ahorrar espacio */
-  }
+.btnDelete {
+    background-color: transparent;
+    border: 1px solid #fc8181;
+    color: #fc8181;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* =========================================
+   MODO OSCURO (Integrado)
+   ========================================= */
+:global(body[data-theme='dark']) .title { color: #2a7fd5; }
+:global(body[data-theme='dark']) .backBtn { color: #fff; border-color: #555; }
+
+:global(body[data-theme='dark']) .searchInput {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: white;
+}
+
+:global(body[data-theme='dark']) .card {
+    background-color: #191970; /* Azul Medianoche solicitado */
+    border-color: #2d3748;
+}
+
+:global(body[data-theme='dark']) .clientName { color: #fff; }
+:global(body[data-theme='dark']) .date { color: #cbd5e0; }
+:global(body[data-theme='dark']) .total { color: #FFD700; } /* Amarillo */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* MÓVIL */
+@media (max-width: 600px) {
+    .card { flex-direction: column; align-items: flex-start; gap: 15px; }
+    .actions { flex-direction: row; width: 100%; }
+    .btnAction, .btnDelete { flex: 1; }
 }

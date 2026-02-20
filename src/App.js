@@ -136,21 +136,21 @@ function App() {
 
     const isSuperAdmin = user?.email === ADMIN_EMAIL;
 
-    // 1. Configuramos dinámicamente qué Título y qué Botón de Volver mostrar en el Header
-    let headerTitle = "Panel de Control";
-    let handleBack = null; // Si es null, el Header muestra el Logo
+    // 1. Configuramos dinámicamente el Subtítulo y el Botón de Volver
+    let headerSubtitle = "Panel de Control";
+    let handleBack = null; // Si es null, muestra el logo. Si tiene función, muestra el botón ESC.
 
     if (showSuperAdminPanel) {
-        headerTitle = "Panel de Super Admin";
+        headerSubtitle = "Panel de Super Admin";
         handleBack = () => setShowSuperAdminPanel(false);
     } else if (currentView === "cotizador") {
-        headerTitle = "Nuevo Presupuesto";
+        headerSubtitle = "Nuevo Presupuesto";
         handleBack = () => setCurrentView("dashboard");
     } else if (currentView === "clientes") {
-        headerTitle = "Cartera de Clientes";
+        headerSubtitle = "Cartera de Clientes";
         handleBack = () => setCurrentView("dashboard");
     } else if (currentView === "historial") {
-        headerTitle = "Historial de Presupuestos";
+        headerSubtitle = "Historial de Presupuestos";
         handleBack = () => setCurrentView("dashboard");
     }
 
@@ -163,9 +163,10 @@ function App() {
                 </div>
             );
         }
-        if (currentView === "cotizador") return <Cotizador />;
-        if (currentView === "clientes") return <Clientes />;
-        if (currentView === "historial") return <Historial />;
+
+       if (currentView === "cotizador") return <Cotizador onBack={handleBack} />;
+       if (currentView === "clientes") return <Clientes onBack={handleBack} />;
+       if (currentView === "historial") return <Historial onBack={handleBack} />;
 
         return (
             <DashboardHome
@@ -183,10 +184,11 @@ function App() {
         <>
             {/* UN SOLO HEADER INTELIGENTE PARA TODO */}
             <Header
-                title={headerTitle}
+                title="ElectroApp" // El título principal fijo y centrado
+                subtitle={headerSubtitle} // El subtítulo dinámico amarillo
                 user={user}
                 onLogout={handleLogout}
-                onBack={handleBack}
+                onBack={handleBack} // Esto activa el botón ESC en la izquierda
                 darkMode={darkMode}
                 toggleDarkMode={() => setDarkMode(!darkMode)}
             />

@@ -62,7 +62,7 @@ const Historial = ({ onBack }) => {
         <div className={styles.container}>
             {/* ENCABEZADO */}
             <div className={styles.topBar}>
-                <button onClick={onBack} className={styles.backBtn}>← Volver</button>
+                
                 <h2 className={styles.title}>Historial de Presupuestos</h2>
             </div>
 

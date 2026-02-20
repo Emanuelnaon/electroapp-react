@@ -1,144 +1,154 @@
-.container {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-    animation: fadeIn 0.3s ease;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+  /* Un poco más alto para que entre el subtítulo */
+  padding: 0 20px;
+  background-color: #131517;
+  /* Negro Industrial */
+  border-bottom: 3px solid #FFD700;
+  /* Línea Amarilla */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  color: white;
 }
 
-.topBar {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 25px;
+/* --- IZQUIERDA --- */
+.leftSection {
+  flex: 1;
+  /* Ocupa el 25% del ancho */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.logoCircle {
+  width: 40px;
+  height: 40px;
+  background: #FFD700;
+  color: #131517;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.backButton {
+  background: #ef4444;
+  /* Rojo para que sea evidente que es ESC */
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s;
+}
+
+.backButton:hover {
+  background: #dc2626;
+}
+
+/* --- CENTRO (TÍTULO Y SUBTÍTULO) --- */
+.centerSection {
+  flex: 2;
+  /* Ocupa el 50% del ancho, forzando el centro */
+  display: flex;
+  flex-direction: column;
+  /* Pone el subtítulo abajo del título */
+  justify-content: center;
+  align-items: center;
 }
 
 .title {
-    margin: 0;
-    color: #131517;
-    font-size: 1.8rem;
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #ffffff;
+  line-height: 1.1;
 }
 
-.backBtn {
-    background: none;
-    border: 2px solid #ccc;
-    padding: 8px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
+.subtitle {
+  font-size: 0.85rem;
+  color: #FFD700;
+  /* Subtítulo en amarillo para resaltar */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
 }
 
-.searchInput {
-    width: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    margin-bottom: 20px;
+/* --- DERECHA --- */
+.rightSection {
+  flex: 1;
+  /* Ocupa el 25% del ancho */
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
 }
 
-/* GRID DE TARJETAS */
-.grid {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.themeToggle {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
 }
 
-.card {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+.themeToggle:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.2);
 }
 
-.cardInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+.logoutBtn {
+  background: transparent;
+  color: #a0aec0;
+  border: 1px solid #4a5568;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.cardHeader {
-    display: flex;
-    gap: 10px;
-    font-size: 0.85rem;
-    color: #666;
+.logoutBtn:hover {
+  color: white;
+  border-color: #ef4444;
+  background: #ef4444;
 }
 
-.clientName {
-    margin: 5px 0;
-    font-size: 1.2rem;
-    color: #2d3748;
-}
-
-.total {
-    font-weight: bold;
-    color: #48bb78; /* Verde dinero */
-    margin: 0;
-}
-
-.itemCount {
-    font-size: 0.8rem;
-    color: #a0aec0;
-    margin: 0;
-}
-
-/* BOTONES */
-.actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.btnAction {
-    background-color: #3182ce;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.btnDelete {
-    background-color: transparent;
-    border: 1px solid #fc8181;
-    color: #fc8181;
-    padding: 8px 15px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-/* =========================================
-   MODO OSCURO (Integrado)
-   ========================================= */
-:global(body[data-theme='dark']) .title { color: #2a7fd5; }
-:global(body[data-theme='dark']) .backBtn { color: #fff; border-color: #555; }
-
-:global(body[data-theme='dark']) .searchInput {
-    background-color: #1f2937;
-    border-color: #374151;
-    color: white;
-}
-
-:global(body[data-theme='dark']) .card {
-    background-color: #191970; /* Azul Medianoche solicitado */
-    border-color: #2d3748;
-}
-
-:global(body[data-theme='dark']) .clientName { color: #fff; }
-:global(body[data-theme='dark']) .date { color: #cbd5e0; }
-:global(body[data-theme='dark']) .total { color: #FFD700; } /* Amarillo */
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* MÓVIL */
+/* RESPONSIVE MÓVIL */
 @media (max-width: 600px) {
-    .card { flex-direction: column; align-items: flex-start; gap: 15px; }
-    .actions { flex-direction: row; width: 100%; }
-    .btnAction, .btnDelete { flex: 1; }
+  .header {
+    padding: 0 10px;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .subtitle {
+    font-size: 0.7rem;
+  }
+
+  .backButton {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
 }

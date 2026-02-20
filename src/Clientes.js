@@ -75,9 +75,7 @@ const Clientes = ({ onBack }) => {
         <div className={styles.container}>
             {/* BARRA DE HERRAMIENTAS */}
             <div className={styles.toolbar}>
-                <button onClick={onBack} className={styles.backBtn}>
-                    Esc
-                </button>
+                
                 <div className={styles.searchWrapper}>
                     <span className={styles.searchIcon}>🔍</span>
                     <input

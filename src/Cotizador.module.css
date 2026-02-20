@@ -669,3 +669,123 @@
    color: white;
    border-color: #555;
 }
+
+/* --- AUTOCOMPLETADO --- */
+.inputWrapper {
+   position: relative;
+   width: 100%;
+}
+
+.suggestionsList {
+   position: absolute;
+   top: 100%;
+   left: 0;
+   width: 100%;
+   background: white;
+   border: 1px solid #cbd5e0;
+   border-radius: 6px;
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+   margin: 4px 0 0 0;
+   padding: 0;
+   list-style: none;
+   z-index: 100;
+   /* Para que quede por encima de todo */
+   max-height: 200px;
+   overflow-y: auto;
+}
+
+.suggestionItem {
+   padding: 10px 15px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   cursor: pointer;
+   border-bottom: 1px solid #e2e8f0;
+   transition: background 0.2s;
+}
+
+.suggestionItem:last-child {
+   border-bottom: none;
+}
+
+.suggestionItem:hover {
+   background-color: #ebf8ff;
+   /* Azul muy clarito */
+}
+
+.sugNombre {
+   font-size: 0.9rem;
+   color: #2d3748;
+   font-weight: 500;
+}
+
+.sugPrecio {
+   font-size: 0.9rem;
+   color: #48bb78;
+   font-weight: bold;
+}
+
+/* Modo oscuro para sugerencias */
+:global(body[data-theme='dark']) .suggestionsList {
+   background: #1f2937;
+   border-color: #374151;
+}
+
+:global(body[data-theme='dark']) .suggestionItem {
+   border-bottom-color: #374151;
+}
+
+:global(body[data-theme='dark']) .suggestionItem:hover {
+   background-color: #374151;
+}
+
+:global(body[data-theme='dark']) .sugNombre {
+   color: #e2e8f0;
+}
+
+:global(body[data-theme='dark']) .sugPrecio {
+   color: #48bb78;
+}
+
+/* --- AGENDA CLIENTES --- */
+.labelRow {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 5px;
+}
+
+.labelRow .label {
+   margin-bottom: 0;
+   /* Quitamos el margen porque ahora lo controla el row */
+}
+
+.agendaBtn {
+   background: transparent;
+   border: 1px solid #cbd5e0;
+   color: #4a5568;
+   padding: 2px 8px;
+   border-radius: 4px;
+   font-size: 0.75rem;
+   font-weight: bold;
+   cursor: pointer;
+   transition: all 0.2s;
+   display: flex;
+   align-items: center;
+   gap: 4px;
+}
+
+.agendaBtn:hover {
+   background: #FFD700;
+   color: #131517;
+   border-color: #FFD700;
+}
+
+:global(body[data-theme='dark']) .agendaBtn {
+   border-color: #4a5568;
+   color: #a0aec0;
+}
+
+:global(body[data-theme='dark']) .agendaBtn:hover {
+   color: #131517;
+}

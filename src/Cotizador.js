@@ -14,9 +14,40 @@ const Cotizador = ({ onBack }) => {
     const [items, setItems] = useState([
         { id: 1, descripcion: "", cantidad: 1, precio: "" },
     ]);
+    const [misItemsGuardados, setMisItemsGuardados] = useState([]);
+    const [clientesGuardados, setClientesGuardados] = useState([]);
+    const [sugerenciasClientes, setSugerenciasClientes] = useState([]);
+    const [mostrarSugerenciasClientes, setMostrarSugerenciasClientes] =
+        useState(false);
+    const [sugerencias, setSugerencias] = useState([]);
+    const [filaActivaSugerencia, setFilaActivaSugerencia] = useState(null);
     const [showShareModal, setShowShareModal] = useState(false);
     const [isSaving, setIsSaving] = useState(false); // ✅ AGREGADO
     const itemsRef = useRef([]);
+    // Cargar los items guardados del usuario al abrir el cotizador
+    useEffect(() => {
+        const cargarDatos = async () => {
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
+            if (!user) return;
+
+            // Cargar Items
+            const { data: itemsData } = await supabase
+                .from("mis_items")
+                .select("*")
+                .eq("user_id", user.id);
+            if (itemsData) setMisItemsGuardados(itemsData);
+
+            // Cargar Clientes
+            const { data: clientesData } = await supabase
+                .from("clientes")
+                .select("*")
+                .eq("user_id", user.id);
+            if (clientesData) setClientesGuardados(clientesData);
+        };
+        cargarDatos();
+    }, []);
 
     // 2. DEFINICIÓN DE TODAS LAS FUNCIONES (Lógica)
 
@@ -141,13 +172,77 @@ const Cotizador = ({ onBack }) => {
         setItems(items.filter((item) => item.id !== id));
     };
 
-    // Actualizar Item
-    const updateItem = (id, field, value) => {
-        const newItems = items.map((item) => {
-            if (item.id === id) return { ...item, [field]: value };
-            return item;
-        });
+    const updateItem = (index, field, value) => {
+        const newItems = [...items];
+
+        // 🛡️ PARCHE DE SEGURIDAD: Si la fila no existe por algún motivo, abortamos sin crashear.
+        if (!newItems[index]) return;
+
+        // 🛠️ CLONAMOS el objeto correctamente (React odia que modifiquemos las cosas directamente)
+        newItems[index] = { ...newItems[index], [field]: value };
         setItems(newItems);
+
+        // 💡 LÓGICA DE AUTOCOMPLETADO (Solo busca cuando escribes en "descripcion")
+        if (field === "descripcion") {
+            if (value.trim().length > 0) {
+                const filtrados = misItemsGuardados.filter((item) =>
+                    item.nombre.toLowerCase().includes(value.toLowerCase()),
+                );
+                setSugerencias(filtrados);
+                setFilaActivaSugerencia(index);
+            } else {
+                setSugerencias([]);
+                setFilaActivaSugerencia(null);
+            }
+        }
+    };
+
+    const seleccionarSugerencia = (index, sugerencia) => {
+        const newItems = [...items];
+
+        // 🛡️ PARCHE DE SEGURIDAD AQUÍ TAMBIÉN
+        if (!newItems[index]) return;
+
+        // Rellenamos ambos campos automáticamente
+        newItems[index] = {
+            ...newItems[index],
+            descripcion: sugerencia.nombre,
+            precio: sugerencia.precio,
+        };
+        setItems(newItems);
+
+        // Cerramos el menú flotante
+        setSugerencias([]);
+        setFilaActivaSugerencia(null);
+    };
+
+    // --- LÓGICA AUTOCOMPLETADO DE CLIENTES ---
+    const handleClientNameChange = (e) => {
+        const value = e.target.value;
+        setCliente({ ...cliente, nombre: value });
+
+        if (value.trim().length > 0) {
+            const filtrados = clientesGuardados.filter((c) =>
+                c.nombre.toLowerCase().includes(value.toLowerCase()),
+            );
+            setSugerenciasClientes(filtrados);
+            setMostrarSugerenciasClientes(true);
+        } else {
+            setSugerenciasClientes([]);
+            setMostrarSugerenciasClientes(false);
+        }
+    };
+
+    const seleccionarCliente = (clienteSeleccionado) => {
+        setCliente({
+            nombre: clienteSeleccionado.nombre,
+            telefono: clienteSeleccionado.telefono || "",
+            email: clienteSeleccionado.email || "",
+            fecha: cliente.fecha, // Mantenemos la fecha actual
+        });
+        setSugerenciasClientes([]);
+        setMostrarSugerenciasClientes(false);
+        toast.success(`Datos de ${clienteSeleccionado.nombre} cargados`);
     };
 
     // Calcular Total
@@ -213,21 +308,18 @@ const Cotizador = ({ onBack }) => {
     };
 
     const handleKeyDownTable = (e, index, field, id) => {
+        // Si presiona Enter, evitamos que haga un salto de línea raro
+        // y si está en la columna "precio", agregamos una fila nueva abajo.
         if (e.key === "Enter") {
             e.preventDefault();
-            if (field === "precio") addItem();
+            if (field === "precio") {
+                addItem();
+            }
         }
-        if (
-            e.key === "Backspace" &&
-            field === "descripcion" &&
-            items[index].descripcion === "" &&
-            items.length > 1
-        ) {
-            e.preventDefault();
-            removeItem(id);
-            if (index > 0 && itemsRef.current[index - 1])
-                itemsRef.current[index - 1].focus();
-        }
+
+        // ¡ELIMINAMOS la lógica del Backspace!
+        // Ahora borrar solo borrará texto, y la única forma de eliminar
+        // la fila completa será haciendo clic en la "X".
     };
 
     // 3. USE EFFECT
@@ -235,7 +327,9 @@ const Cotizador = ({ onBack }) => {
         const handleGlobalKeys = (e) => {
             if (e.key === "Escape") {
                 if (showShareModal) setShowShareModal(false);
-                else onBack();
+                else {
+                    onBack?.();
+                }
             }
 
             if (!showShareModal) {
@@ -266,7 +360,7 @@ const Cotizador = ({ onBack }) => {
         window.addEventListener("keydown", handleGlobalKeys);
         return () => window.removeEventListener("keydown", handleGlobalKeys);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [cliente, items, showShareModal]);
+    }, [cliente, items, showShareModal, onBack]);
 
     // 4. RENDERIZADO (JSX)
     return (
@@ -289,11 +383,6 @@ const Cotizador = ({ onBack }) => {
 
             {/* TOOLBAR */}
             <div className={`${styles.toolbar} ${styles.noPrint}`}>
-                <div className={styles.titleRow}>
-                    <button onClick={onBack} className={styles.backButton}>
-                        ← Esc
-                    </button>
-                </div>
                 <div className={styles.shortcutsInfo}>
                     <span>
                         <span className={styles.key}>F2</span> Nueva Fila
@@ -346,17 +435,60 @@ const Cotizador = ({ onBack }) => {
             {/* DATOS CLIENTE */}
             <div className={styles.clientSection}>
                 <div className={styles.inputGroup}>
-                    <label className={styles.label}>Cliente / Empresa</label>
-                    <input
-                        autoFocus
-                        type="text"
-                        placeholder="Nombre completo"
-                        className={styles.input}
-                        value={cliente.nombre}
-                        onChange={(e) =>
-                            setCliente({ ...cliente, nombre: e.target.value })
-                        }
-                    />
+                    {/* Fila del Label y el Botón de Agenda */}
+                    <div className={styles.labelRow}>
+                        <label className={styles.label}>
+                            Cliente / Empresa
+                        </label>
+                        <button
+                            className={styles.agendaBtn}
+                            onClick={() => onBack?.()} // Por ahora te lleva a la vista general, luego abriremos un modal
+                            title="Abrir Agenda de Clientes"
+                        >
+                            📖 Agenda
+                        </button>
+                    </div>
+
+                    {/* Input con Autocompletado */}
+                    <div className={styles.inputWrapper}>
+                        <input
+                            autoFocus
+                            type="text"
+                            placeholder="Buscar o escribir nombre..."
+                            className={styles.input}
+                            value={cliente.nombre}
+                            onChange={handleClientNameChange}
+                            onBlur={() =>
+                                setTimeout(
+                                    () => setMostrarSugerenciasClientes(false),
+                                    200,
+                                )
+                            }
+                        />
+
+                        {/* MENÚ DESPLEGABLE DE CLIENTES */}
+                        {mostrarSugerenciasClientes &&
+                            sugerenciasClientes.length > 0 && (
+                                <ul className={styles.suggestionsList}>
+                                    {sugerenciasClientes.map((c) => (
+                                        <li
+                                            key={c.id}
+                                            onClick={() =>
+                                                seleccionarCliente(c)
+                                            }
+                                            className={styles.suggestionItem}
+                                        >
+                                            <span className={styles.sugNombre}>
+                                                {c.nombre}
+                                            </span>
+                                            <span className={styles.sugPrecio}>
+                                                {c.telefono || "Sin teléfono"}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                    </div>
                 </div>
                 <div className={styles.inputGroup}>
                     <label className={styles.label}>Teléfono (WhatsApp)</label>
@@ -410,31 +542,84 @@ const Cotizador = ({ onBack }) => {
                                     isEmpty ? styles.hideWhenPrinting : ""
                                 }
                             >
-                                <td>
-                                    <input
-                                        ref={(el) =>
-                                            (itemsRef.current[index] = el)
-                                        }
-                                        type="text"
-                                        className={styles.tableInput}
-                                        placeholder="Descripción..."
-                                        value={item.descripcion}
-                                        onChange={(e) =>
-                                            updateItem(
-                                                item.id,
-                                                "descripcion",
-                                                e.target.value,
-                                            )
-                                        }
-                                        onKeyDown={(e) =>
-                                            handleKeyDownTable(
-                                                e,
-                                                index,
-                                                "descripcion",
-                                                item.id,
-                                            )
-                                        }
-                                    />
+                                <td className={styles.td}>
+                                    <div className={styles.inputWrapper}>
+                                        <input
+                                            ref={(el) =>
+                                                (itemsRef.current[index] = el)
+                                            }
+                                            className={styles.input}
+                                            type="text"
+                                            placeholder="Ej: Instalación de toma..."
+                                            value={item.descripcion}
+                                            onChange={(e) =>
+                                                updateItem(
+                                                    index,
+                                                    "descripcion",
+                                                    e.target.value,
+                                                )
+                                            }
+                                            onKeyDown={(e) =>
+                                                handleKeyDownTable(
+                                                    e,
+                                                    index,
+                                                    "descripcion",
+                                                    item.id,
+                                                )
+                                            }
+                                            // Retrasamos el cierre para que dé tiempo de hacer clic
+                                            onBlur={() =>
+                                                setTimeout(
+                                                    () =>
+                                                        setFilaActivaSugerencia(
+                                                            null,
+                                                        ),
+                                                    200,
+                                                )
+                                            }
+                                        />
+
+                                        {/* MENÚ DESPLEGABLE DE SUGERENCIAS */}
+                                        {filaActivaSugerencia === index &&
+                                            sugerencias.length > 0 && (
+                                                <ul
+                                                    className={
+                                                        styles.suggestionsList
+                                                    }
+                                                >
+                                                    {sugerencias.map((sug) => (
+                                                        <li
+                                                            key={sug.id}
+                                                            onClick={() =>
+                                                                seleccionarSugerencia(
+                                                                    index,
+                                                                    sug,
+                                                                )
+                                                            }
+                                                            className={
+                                                                styles.suggestionItem
+                                                            }
+                                                        >
+                                                            <span
+                                                                className={
+                                                                    styles.sugNombre
+                                                                }
+                                                            >
+                                                                {sug.nombre}
+                                                            </span>
+                                                            <span
+                                                                className={
+                                                                    styles.sugPrecio
+                                                                }
+                                                            >
+                                                                $
+                                                                {sug.precio.toLocaleString()}
+                                                            </span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                    </div>
                                 </td>
                                 <td>
                                     <input
@@ -443,7 +628,7 @@ const Cotizador = ({ onBack }) => {
                                         value={item.cantidad}
                                         onChange={(e) =>
                                             updateItem(
-                                                item.id,
+                                                index,
                                                 "cantidad",
                                                 e.target.value,
                                             )
@@ -480,7 +665,7 @@ const Cotizador = ({ onBack }) => {
                                         value={item.precio}
                                         onChange={(e) =>
                                             updateItem(
-                                                item.id,
+                                                index,
                                                 "precio",
                                                 e.target.value,
                                             )
@@ -558,6 +743,6 @@ const Cotizador = ({ onBack }) => {
             )}
         </div>
     );
-};
+};;
 
 export default Cotizador;

@@ -24,6 +24,8 @@ const Cotizador = ({ onBack }) => {
     const [showShareModal, setShowShareModal] = useState(false);
     const [isSaving, setIsSaving] = useState(false); // ✅ AGREGADO
     const itemsRef = useRef([]);
+    const [showAgendaModal, setShowAgendaModal] = useState(false); // ✅ NUEVO ESTADO
+
     // Cargar los items guardados del usuario al abrir el cotizador
     useEffect(() => {
         const cargarDatos = async () => {
@@ -327,6 +329,7 @@ const Cotizador = ({ onBack }) => {
         const handleGlobalKeys = (e) => {
             if (e.key === "Escape") {
                 if (showShareModal) setShowShareModal(false);
+                    else if (showAgendaModal) setShowAgendaModal(false);
                 else {
                     onBack?.();
                 }
@@ -360,7 +363,7 @@ const Cotizador = ({ onBack }) => {
         window.addEventListener("keydown", handleGlobalKeys);
         return () => window.removeEventListener("keydown", handleGlobalKeys);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [cliente, items, showShareModal, onBack]);
+    }, [cliente, items, showShareModal, onBack, showAgendaModal]);
 
     // 4. RENDERIZADO (JSX)
     return (
@@ -442,7 +445,7 @@ const Cotizador = ({ onBack }) => {
                         </label>
                         <button
                             className={styles.agendaBtn}
-                            onClick={() => onBack?.()} // Por ahora te lleva a la vista general, luego abriremos un modal
+                            onClick={() => setShowAgendaModal(true)} // Por ahora te lleva a la vista general, luego abriremos un modal
                             title="Abrir Agenda de Clientes"
                         >
                             📖 Agenda
@@ -717,6 +720,72 @@ const Cotizador = ({ onBack }) => {
                 </div>
             </div>
 
+            {/* MODAL DE AGENDA */}
+            {showAgendaModal && (
+                <div className={styles.modalOverlay}>
+                    <div
+                        className={styles.modalContent}
+                        style={{ maxWidth: "500px", width: "95%" }}
+                    >
+                        <div className={styles.modalHeader}>
+                            <h3>📖 Mis Clientes</h3>
+                            <button
+                                onClick={() => setShowAgendaModal(false)}
+                                className={styles.iconBtn}
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        {clientesGuardados.length === 0 ? (
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                    color: "#718096",
+                                    padding: "20px",
+                                }}
+                            >
+                                Aún no tienes clientes guardados en la nube.
+                            </p>
+                        ) : (
+                            <div className={styles.agendaList}>
+                                {clientesGuardados.map((c) => (
+                                    <div
+                                        key={c.id}
+                                        className={styles.agendaItem}
+                                        onClick={() => {
+                                            seleccionarCliente(c);
+                                            setShowAgendaModal(false);
+                                        }}
+                                    >
+                                        <div className={styles.agendaItemInfo}>
+                                            <span
+                                                className={
+                                                    styles.agendaItemName
+                                                }
+                                            >
+                                                {c.nombre}
+                                            </span>
+                                            <span
+                                                className={
+                                                    styles.agendaItemDetails
+                                                }
+                                            >
+                                                {c.telefono &&
+                                                    `📱 ${c.telefono}  `}
+                                                {c.email && `📧 ${c.email}`}
+                                            </span>
+                                        </div>
+                                        <button className={styles.selectBtn}>
+                                            Elegir
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
             {/* MODAL DE ENVÍO */}
             {showShareModal && (
                 <div className={styles.modalOverlay}>

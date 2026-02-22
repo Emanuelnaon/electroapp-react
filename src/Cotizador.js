@@ -134,7 +134,13 @@ const Cotizador = ({ onBack }) => {
                 fecha: new Date().toISOString().split("T")[0],
             });
             setItems([
-                { id: Date.now(), descripcion: "", cantidad: 1, precio: "", materiales: "" },
+                {
+                    id: Date.now(),
+                    descripcion: "",
+                    cantidad: 1,
+                    precio: "",
+                    materiales: "",
+                },
             ]);
             toast.success("Campos limpios ✨");
 
@@ -155,14 +161,19 @@ const Cotizador = ({ onBack }) => {
             descripcion: "",
             cantidad: 1,
             precio: "",
-             materiales: "",
+            materiales: "", // Nos aseguramos de que inicie vacío
         };
         setItems((prev) => [...prev, newItem]);
+
+        // Esperamos a que React dibuje la fila y hacemos focus en la nueva descripción
         setTimeout(() => {
-            const lastIndex = items.length;
-            if (itemsRef.current[lastIndex])
-                itemsRef.current[lastIndex].focus();
-        }, 50);
+            const inputsDesc = document.querySelectorAll(
+                'input[placeholder="Ej: Instalación de toma..."]',
+            );
+            if (inputsDesc.length > 0) {
+                inputsDesc[inputsDesc.length - 1].focus();
+            }
+        }, 100);
     };
 
     // Eliminar Item
@@ -314,56 +325,57 @@ const Cotizador = ({ onBack }) => {
         setShowShareModal(false);
     };
 
- const handleKeyDownTable = (e, index, field, id) => {
-     // --- 1. LÓGICA DE NAVEGACIÓN EN EL MENÚ DESPLEGABLE ---
-     if (
-         field === "descripcion" &&
-         filaActivaSugerencia === index &&
-         sugerencias.length > 0
-     ) {
-         if (e.key === "ArrowDown") {
-             e.preventDefault(); // Evita que el cursor se mueva dentro del input
-             setSugerenciaResaltada((prev) =>
-                 prev < sugerencias.length - 1 ? prev + 1 : prev,
-             );
-             return;
-         }
-         if (e.key === "ArrowUp") {
-             e.preventDefault();
-             setSugerenciaResaltada((prev) => (prev > 0 ? prev - 1 : -1));
-             return;
-         }
-         if (e.key === "Enter" && sugerenciaResaltada >= 0) {
-             e.preventDefault();
-             // Si presionó Enter y tenía una sugerencia marcada, la selecciona
-             seleccionarSugerencia(index, sugerencias[sugerenciaResaltada]);
-             return;
-         }
-     }
+    const handleKeyDownTable = (e, index, field, id) => {
+        // --- 1. LÓGICA DE NAVEGACIÓN EN EL MENÚ DESPLEGABLE ---
+        if (
+            field === "descripcion" &&
+            filaActivaSugerencia === index &&
+            sugerencias.length > 0
+        ) {
+            if (e.key === "ArrowDown") {
+                e.preventDefault(); // Evita que el cursor se mueva dentro del input
+                setSugerenciaResaltada((prev) =>
+                    prev < sugerencias.length - 1 ? prev + 1 : prev,
+                );
+                return;
+            }
+            if (e.key === "ArrowUp") {
+                e.preventDefault();
+                setSugerenciaResaltada((prev) => (prev > 0 ? prev - 1 : -1));
+                return;
+            }
+            if (e.key === "Enter" && sugerenciaResaltada >= 0) {
+                e.preventDefault();
+                // Si presionó Enter y tenía una sugerencia marcada, la selecciona
+                seleccionarSugerencia(index, sugerencias[sugerenciaResaltada]);
+                return;
+            }
+        }
 
-     // --- 2. LÓGICA NORMAL (Pasar a la siguiente celda o crear fila) ---
-     if (e.key === "Enter") {
-         e.preventDefault();
+        // --- 2. LÓGICA DEL ENTER (Pasa de celda en celda y crea fila nueva) ---
+        if (e.key === "Enter") {
+            e.preventDefault();
 
-         // Si apretó Enter pero no usó las flechas, cerramos el menú que haya quedado abierto
-         if (filaActivaSugerencia === index) {
-             setSugerencias([]);
-             setFilaActivaSugerencia(null);
-         }
+            // Cerramos cualquier menú abierto
+            setSugerencias([]);
+            setFilaActivaSugerencia(null);
 
-         if (field === "materiales") {
-             addItem();
-         } else {
-             const inputs = document.querySelectorAll("input");
-             for (let i = 0; i < inputs.length; i++) {
-                 if (inputs[i] === e.target && inputs[i + 1]) {
-                     inputs[i + 1].focus();
-                     break;
-                 }
-             }
-         }
-     }
- };
+            if (field === "materiales") {
+                // Si estamos en la última celda, creamos fila (el focus lo hace addItem)
+                addItem();
+            } else {
+                // Si estamos en el medio, saltamos a la siguiente celda de ESTA fila
+                const rowInputs = e.target
+                    .closest("tr")
+                    .querySelectorAll("input");
+                const currentIndex = Array.from(rowInputs).indexOf(e.target);
+                if (currentIndex > -1 && rowInputs[currentIndex + 1]) {
+                    rowInputs[currentIndex + 1].focus();
+                }
+            }
+        }
+    };
+    // 1. FIN DE FUNCIONES
 
     // 3. USE EFFECT
     useEffect(() => {
@@ -845,6 +857,12 @@ const Cotizador = ({ onBack }) => {
                                 })}
                             </tbody>
                         </table>
+                        <div className={`${styles.tableFooter} ${styles.noPrint}`}>
+                            <button onClick={addItem} className={styles.addBtn}>
+                                + Agregar Fila
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -942,6 +960,6 @@ const Cotizador = ({ onBack }) => {
             )}
         </div>
     );
-};;;
+};
 
 export default Cotizador;

@@ -1,3 +1,4 @@
+// DashboardHome.js
 import React, { useState, useEffect } from "react"; // ✅ Agregados useState y useEffect
 import styles from "./DashboardHome.module.css";
 import { supabase } from "./supabaseClient";

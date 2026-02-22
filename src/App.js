@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import styles from "./App.module.css";
@@ -193,7 +194,13 @@ function App() {
                 toggleDarkMode={() => setDarkMode(!darkMode)}
             />
 
-            <main className={styles.main}>{renderDashboardContent()}</main>
+            <main
+                className={
+                    currentView === "cotizador" ? styles.mainFull : styles.main
+                }
+            >
+                {renderDashboardContent()}
+            </main>
 
             <Footer />
             <ScrollToTop />

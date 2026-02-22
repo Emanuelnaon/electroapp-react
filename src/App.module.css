@@ -1,3 +1,4 @@
+/* App.module.css */
 .main {
   width: 100%;
   max-width: 900px;
@@ -6,6 +7,15 @@
   min-height: 80vh;
   border: dashed 4px #b198dc;
   border-radius: 12px;
+}
+
+/* Contenedor sin límites para el Cotizador y tablas grandes */
+.mainFull {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  min-height: 80vh;
 }
 
 /* Agregamos esto para asegurar que el scroll sea global */

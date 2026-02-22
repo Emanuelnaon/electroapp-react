@@ -1,12 +1,10 @@
 /* Cotizador.module.css */
+/* Cotizador.module.css */
 .container {
-   background-color: #ffffff;
    width: 95%;
    max-width: 1400px;
    margin: 20px auto;
-   padding: 30px;
-   border-radius: 12px;
-   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+   /* Eliminamos padding, background y sombras. Ahora es solo un envoltorio invisible */
    font-family: 'Inter', system-ui, sans-serif;
 }
 
@@ -599,13 +597,15 @@
    MODO OSCURO (Midnight Blue #191970)
    ========================================= */
 
-/* 1. Fondo principal del Cotizador */
+/* 1. Fondo principal pasa al panel izquierdo */
 :global(body[data-theme='dark']) .container {
-   background-color: #191970;
-   /* El color que pediste */
    color: #ffffff;
+}
+
+:global(body[data-theme='dark']) .leftPanel {
+   background-color: #191970;
    border: 1px solid #4b5563;
-   box-shadow: none;
+   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 /* 2. Paneles internos (Cliente y Barra de herramientas) */
@@ -887,4 +887,61 @@
 
 :global(body[data-theme='dark']) .agendaItemDetails {
    color: #a0aec0;
+}
+
+/* =========================================
+   LAYOUT DEFINITIVO (IZQ: Control / DER: Lista)
+========================================= */
+/* El contenedor principal vuelve a ocupar todo el espacio disponible sin fondos raros */
+.container {
+   width: 100%;
+   max-width: 1600px;
+   margin: 0 auto;
+   padding: 20px;
+   font-family: 'Inter', system-ui, sans-serif;
+}
+
+.splitLayout {
+   display: flex;
+   gap: 30px;
+   align-items: stretch;
+   /* Hace que ambas hojas tengan la misma altura mínima */
+}
+
+/* HOJA IZQUIERDA (Control) */
+.leftPanel {
+   flex: 0 0 400px;
+   /* Ancho fijo para los controles */
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+}
+
+/* HOJA DERECHA (Lista y Total) */
+.rightPanel {
+   flex: 1;
+   /* Ocupa todo el resto del espacio derecho */
+   background: white;
+   padding: 30px;
+   border-radius: 12px;
+   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   /* Empuja el Total hacia abajo */
+   min-height: 70vh;
+   /* Altura mínima para que se vea como una hoja grande */
+}
+
+.tableContainer {
+   width: 100%;
+   overflow-x: auto;
+   /* Por si la tabla es muy ancha, evita desbordes */
+}
+
+/* Ajustes del modo oscuro para el nuevo contenedor derecho */
+:global(body[data-theme='dark']) .rightPanel {
+   background-color: #1a202c;
+   /* Fondo oscuro de la hoja */
+   border: 1px solid #2d3748;
 }

@@ -368,357 +368,403 @@ const Cotizador = ({ onBack }) => {
     // 4. RENDERIZADO (JSX)
     return (
         <div className={styles.container}>
-            {/* HEADER */}
-            <div className={styles.documentHeader}>
-                <div className={styles.logoContainer}>
-                    <div className={styles.logoCircle}>⚡</div>
-                    <div className={styles.brandText}>
-                        <h1 className={styles.brandName}>ELECTROAPP</h1>
-                        <p className={styles.brandSlogan}>
-                            Servicios Eléctricos Profesionales
-                        </p>
-                    </div>
-                </div>
-                <div className={styles.docInfo}>
-                    <h3>PRESUPUESTO</h3>
-                </div>
-            </div>
-
-            {/* TOOLBAR */}
-            <div className={`${styles.toolbar} ${styles.noPrint}`}>
-                <div className={styles.shortcutsInfo}>
-                    <span>
-                        <span className={styles.key}>F2</span> Nueva Fila
-                    </span>
-                    <span>
-                        <span className={styles.key}>Enter</span> Siguiente
-                    </span>
-                    <span>
-                        <span className={styles.key}>Alt+S</span> Guardar
-                    </span>{" "}
-                    {/* ✅ AVISO ATAJO */}
-                    <span>
-                        <span className={styles.key}>Ctrl+P</span> Imprimir
-                    </span>
-                </div>
-
-                <div className={styles.buttonsContainer}>
-                    {/* ✅ BOTÓN DE GUARDAR INSERTADO AQUÍ */}
-                    <button
-                        onClick={handleSaveQuote}
-                        disabled={isSaving}
-                        className={styles.saveButton}
-                        title="Guardar en la nube (Alt + S)"
-                    >
-                        {isSaving ? "⏳" : "💾 Guardar"}
-                    </button>
-
-                    <button
-                        onClick={handleClear}
-                        className={styles.clearButton}
-                        title="Limpiar todo (Alt + L)"
-                    >
-                        🗑️
-                    </button>
-                    <button
-                        onClick={handlePrint}
-                        className={styles.printButton}
-                    >
-                        🖨️ PDF
-                    </button>
-                    <button
-                        onClick={handleOpenShare}
-                        className={styles.sendButton}
-                    >
-                        🚀 Enviar
-                    </button>
-                </div>
-            </div>
-
-            {/* DATOS CLIENTE */}
-            <div className={styles.clientSection}>
-                <div className={styles.inputGroup}>
-                    {/* Fila del Label y el Botón de Agenda */}
-                    <div className={styles.labelRow}>
-                        <label className={styles.label}>
-                            Cliente / Empresa
-                        </label>
-                        <button
-                            className={styles.agendaBtn}
-                            onClick={() => setShowAgendaModal(true)} // Por ahora te lleva a la vista general, luego abriremos un modal
-                            title="Abrir Agenda de Clientes"
-                        >
-                            📖 Agenda
-                        </button>
+            {/* --- LAYOUT DIVIDIDO --- */}
+            <div className={styles.splitLayout}>
+                {/* ==========================================
+                    HOJA IZQUIERDA: PANEL DE CONTROL
+                ========================================== */}
+                <div className={styles.leftPanel}>
+                    {/* ENCABEZADO Y LOGO */}
+                    <div className={styles.documentHeader}>
+                        <div className={styles.logoContainer}>
+                            <div className={styles.logoCircle}>⚡</div>
+                            <div className={styles.brandText}>
+                                <h1 className={styles.brandName}>ELECTROAPP</h1>
+                                <p className={styles.brandSlogan}>
+                                    Nuevo Presupuesto
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Input con Autocompletado */}
-                    <div className={styles.inputWrapper}>
-                        <input
-                            autoFocus
-                            type="text"
-                            placeholder="Buscar o escribir nombre..."
-                            className={styles.input}
-                            value={cliente.nombre}
-                            onChange={handleClientNameChange}
-                            onBlur={() =>
-                                setTimeout(
-                                    () => setMostrarSugerenciasClientes(false),
-                                    200,
-                                )
-                            }
-                        />
-
-                        {/* MENÚ DESPLEGABLE DE CLIENTES */}
-                        {mostrarSugerenciasClientes &&
-                            sugerenciasClientes.length > 0 && (
-                                <ul className={styles.suggestionsList}>
-                                    {sugerenciasClientes.map((c) => (
-                                        <li
-                                            key={c.id}
-                                            onClick={() =>
-                                                seleccionarCliente(c)
-                                            }
-                                            className={styles.suggestionItem}
-                                        >
-                                            <span className={styles.sugNombre}>
-                                                {c.nombre}
-                                            </span>
-                                            <span className={styles.sugPrecio}>
-                                                {c.telefono || "Sin teléfono"}
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                    </div>
-                </div>
-                <div className={styles.inputGroup}>
-                    <label className={styles.label}>Teléfono (WhatsApp)</label>
-                    <input
-                        type="text"
-                        placeholder="Para envío directo..."
-                        className={styles.input}
-                        value={cliente.telefono}
-                        onChange={(e) =>
-                            setCliente({ ...cliente, telefono: e.target.value })
-                        }
-                    />
-                </div>
-                <div className={styles.inputGroup}>
-                    <label className={styles.label}>Email</label>
-                    <input
-                        type="text"
-                        placeholder="Opcional"
-                        className={styles.input}
-                        value={cliente.email}
-                        onChange={(e) =>
-                            setCliente({ ...cliente, email: e.target.value })
-                        }
-                    />
-                </div>
-            </div>
-
-            {/* TABLA DE ITEMS */}
-            <table className={styles.itemsTable}>
-                <thead>
-                    <tr>
-                        <th style={{ width: "55%" }}>Descripción</th>
-                        <th style={{ width: "10%" }}>Cant.</th>
-                        <th style={{ width: "15%" }}>Precio Unit.</th>
-                        <th style={{ width: "15%", textAlign: "right" }}>
-                            Subtotal
-                        </th>
-                        <th
-                            className={styles.noPrint}
-                            style={{ width: "5%" }}
-                        ></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {items.map((item, index) => {
-                        const isEmpty = !item.descripcion && !item.precio;
-                        return (
-                            <tr
-                                key={item.id}
-                                className={
-                                    isEmpty ? styles.hideWhenPrinting : ""
-                                }
-                            >
-                                <td className={styles.td}>
-                                    <div className={styles.inputWrapper}>
-                                        <input
-                                            ref={(el) =>
-                                                (itemsRef.current[index] = el)
-                                            }
-                                            className={styles.input}
-                                            type="text"
-                                            placeholder="Ej: Instalación de toma..."
-                                            value={item.descripcion}
-                                            onChange={(e) =>
-                                                updateItem(
-                                                    index,
-                                                    "descripcion",
-                                                    e.target.value,
-                                                )
-                                            }
-                                            onKeyDown={(e) =>
-                                                handleKeyDownTable(
-                                                    e,
-                                                    index,
-                                                    "descripcion",
-                                                    item.id,
-                                                )
-                                            }
-                                            // Retrasamos el cierre para que dé tiempo de hacer clic
-                                            onBlur={() =>
-                                                setTimeout(
-                                                    () =>
-                                                        setFilaActivaSugerencia(
-                                                            null,
-                                                        ),
-                                                    200,
-                                                )
-                                            }
-                                        />
-
-                                        {/* MENÚ DESPLEGABLE DE SUGERENCIAS */}
-                                        {filaActivaSugerencia === index &&
-                                            sugerencias.length > 0 && (
-                                                <ul
+                    {/* DATOS DEL CLIENTE Y AGENDA */}
+                    <div className={styles.clientSection}>
+                        <div className={styles.inputGroup}>
+                            <div className={styles.labelRow}>
+                                <label className={styles.label}>
+                                    Cliente / Empresa
+                                </label>
+                                <button
+                                    className={styles.agendaBtn}
+                                    onClick={() => setShowAgendaModal(true)}
+                                >
+                                    📖 Agenda
+                                </button>
+                            </div>
+                            <div className={styles.inputWrapper}>
+                                <input
+                                    autoFocus
+                                    type="text"
+                                    placeholder="Buscar o escribir nombre..."
+                                    className={styles.input}
+                                    value={cliente.nombre}
+                                    onChange={handleClientNameChange}
+                                    onBlur={() =>
+                                        setTimeout(
+                                            () =>
+                                                setMostrarSugerenciasClientes(
+                                                    false,
+                                                ),
+                                            200,
+                                        )
+                                    }
+                                />
+                                {mostrarSugerenciasClientes &&
+                                    sugerenciasClientes.length > 0 && (
+                                        <ul className={styles.suggestionsList}>
+                                            {sugerenciasClientes.map((c) => (
+                                                <li
+                                                    key={c.id}
+                                                    onClick={() =>
+                                                        seleccionarCliente(c)
+                                                    }
                                                     className={
-                                                        styles.suggestionsList
+                                                        styles.suggestionItem
                                                     }
                                                 >
-                                                    {sugerencias.map((sug) => (
-                                                        <li
-                                                            key={sug.id}
-                                                            onClick={() =>
-                                                                seleccionarSugerencia(
-                                                                    index,
-                                                                    sug,
-                                                                )
-                                                            }
+                                                    <span
+                                                        className={
+                                                            styles.sugNombre
+                                                        }
+                                                    >
+                                                        {c.nombre}
+                                                    </span>
+                                                    <span
+                                                        className={
+                                                            styles.sugPrecio
+                                                        }
+                                                    >
+                                                        {c.telefono ||
+                                                            "Sin teléfono"}
+                                                    </span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                            </div>
+                        </div>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>Teléfono</label>
+                            <input
+                                type="text"
+                                placeholder="Para envío directo..."
+                                className={styles.input}
+                                value={cliente.telefono}
+                                onChange={(e) =>
+                                    setCliente({
+                                        ...cliente,
+                                        telefono: e.target.value,
+                                    })
+                                }
+                            />
+                        </div>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>Email</label>
+                            <input
+                                type="text"
+                                placeholder="Opcional"
+                                className={styles.input}
+                                value={cliente.email}
+                                onChange={(e) =>
+                                    setCliente({
+                                        ...cliente,
+                                        email: e.target.value,
+                                    })
+                                }
+                            />
+                        </div>
+                    </div>
+
+                    {/* BOTONERA Y ATAJOS */}
+                    <div className={`${styles.toolbar} ${styles.noPrint}`}>
+                        <div className={styles.shortcutsInfo}>
+                            <span>
+                                <span className={styles.key}>F2</span> Nueva
+                                Fila
+                            </span>
+                            <span>
+                                <span className={styles.key}>Enter</span>{" "}
+                                Siguiente
+                            </span>
+                            <span>
+                                <span className={styles.key}>Alt+S</span>{" "}
+                                Guardar
+                            </span>
+                            <span>
+                                <span className={styles.key}>Ctrl+P</span>{" "}
+                                Imprimir
+                            </span>
+                        </div>
+
+                        <div className={styles.buttonsContainer}>
+                            <button
+                                onClick={handleSaveQuote}
+                                disabled={isSaving}
+                                className={styles.saveButton}
+                            >
+                                {isSaving ? "⏳" : "💾 Guardar"}
+                            </button>
+                            <button
+                                onClick={handleClear}
+                                className={styles.clearButton}
+                                title="Limpiar todo"
+                            >
+                                🗑️ Limpiar
+                            </button>
+                            <button
+                                onClick={handlePrint}
+                                className={styles.printButton}
+                            >
+                                🖨️ PDF
+                            </button>
+                            <button
+                                onClick={handleOpenShare}
+                                className={styles.sendButton}
+                            >
+                                🚀 Enviar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ==========================================
+                    HOJA DERECHA: LA LISTA DE PRECIOS
+                ========================================== */}
+                <div className={styles.rightPanel}>
+                    {/* TABLA DE ITEMS */}
+                    <table className={styles.itemsTable}>
+                        <thead>
+                            <tr>
+                                <th style={{ width: "55%" }}>Descripción</th>
+                                <th style={{ width: "10%" }}>Cant.</th>
+                                <th style={{ width: "15%" }}>Precio Unit.</th>
+                                <th
+                                    style={{ width: "15%", textAlign: "right" }}
+                                >
+                                    Subtotal
+                                </th>
+                                <th
+                                    className={styles.noPrint}
+                                    style={{ width: "5%" }}
+                                ></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {items.map((item, index) => {
+                                const isEmpty =
+                                    !item.descripcion && !item.precio;
+                                return (
+                                    <tr
+                                        key={item.id}
+                                        className={
+                                            isEmpty
+                                                ? styles.hideWhenPrinting
+                                                : ""
+                                        }
+                                    >
+                                        <td className={styles.td}>
+                                            <div
+                                                className={styles.inputWrapper}
+                                            >
+                                                <input
+                                                    ref={(el) =>
+                                                        (itemsRef.current[
+                                                            index
+                                                        ] = el)
+                                                    }
+                                                    className={styles.input}
+                                                    type="text"
+                                                    placeholder="Ej: Instalación de toma..."
+                                                    value={item.descripcion}
+                                                    onChange={(e) =>
+                                                        updateItem(
+                                                            index,
+                                                            "descripcion",
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    onKeyDown={(e) =>
+                                                        handleKeyDownTable(
+                                                            e,
+                                                            index,
+                                                            "descripcion",
+                                                            item.id,
+                                                        )
+                                                    }
+                                                    // Retrasamos el cierre para que dé tiempo de hacer clic
+                                                    onBlur={() =>
+                                                        setTimeout(
+                                                            () =>
+                                                                setFilaActivaSugerencia(
+                                                                    null,
+                                                                ),
+                                                            200,
+                                                        )
+                                                    }
+                                                />
+
+                                                {/* MENÚ DESPLEGABLE DE SUGERENCIAS */}
+                                                {filaActivaSugerencia ===
+                                                    index &&
+                                                    sugerencias.length > 0 && (
+                                                        <ul
                                                             className={
-                                                                styles.suggestionItem
+                                                                styles.suggestionsList
                                                             }
                                                         >
-                                                            <span
-                                                                className={
-                                                                    styles.sugNombre
-                                                                }
-                                                            >
-                                                                {sug.nombre}
-                                                            </span>
-                                                            <span
-                                                                className={
-                                                                    styles.sugPrecio
-                                                                }
-                                                            >
-                                                                $
-                                                                {sug.precio.toLocaleString()}
-                                                            </span>
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            )}
-                                    </div>
-                                </td>
-                                <td>
-                                    <input
-                                        type="number"
-                                        className={styles.tableInput}
-                                        value={item.cantidad}
-                                        onChange={(e) =>
-                                            updateItem(
-                                                index,
-                                                "cantidad",
-                                                e.target.value,
-                                            )
-                                        }
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                const inputs =
-                                                    document.querySelectorAll(
-                                                        "input",
-                                                    );
-                                                for (
-                                                    let i = 0;
-                                                    i < inputs.length;
-                                                    i++
-                                                ) {
-                                                    if (
-                                                        inputs[i] ===
-                                                            e.target &&
-                                                        inputs[i + 1]
-                                                    ) {
-                                                        inputs[i + 1].focus();
-                                                        break;
-                                                    }
+                                                            {sugerencias.map(
+                                                                (sug) => (
+                                                                    <li
+                                                                        key={
+                                                                            sug.id
+                                                                        }
+                                                                        onClick={() =>
+                                                                            seleccionarSugerencia(
+                                                                                index,
+                                                                                sug,
+                                                                            )
+                                                                        }
+                                                                        className={
+                                                                            styles.suggestionItem
+                                                                        }
+                                                                    >
+                                                                        <span
+                                                                            className={
+                                                                                styles.sugNombre
+                                                                            }
+                                                                        >
+                                                                            {
+                                                                                sug.nombre
+                                                                            }
+                                                                        </span>
+                                                                        <span
+                                                                            className={
+                                                                                styles.sugPrecio
+                                                                            }
+                                                                        >
+                                                                            $
+                                                                            {sug.precio.toLocaleString()}
+                                                                        </span>
+                                                                    </li>
+                                                                ),
+                                                            )}
+                                                        </ul>
+                                                    )}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="number"
+                                                className={styles.tableInput}
+                                                value={item.cantidad}
+                                                onChange={(e) =>
+                                                    updateItem(
+                                                        index,
+                                                        "cantidad",
+                                                        e.target.value,
+                                                    )
                                                 }
-                                            }
-                                        }}
-                                    />
-                                </td>
-                                <td>
-                                    <input
-                                        type="number"
-                                        className={styles.tableInput}
-                                        placeholder="0.00"
-                                        value={item.precio}
-                                        onChange={(e) =>
-                                            updateItem(
-                                                index,
-                                                "precio",
-                                                e.target.value,
-                                            )
-                                        }
-                                        onKeyDown={(e) =>
-                                            handleKeyDownTable(
-                                                e,
-                                                index,
-                                                "precio",
-                                                item.id,
-                                            )
-                                        }
-                                    />
-                                </td>
-                                <td
-                                    style={{ textAlign: "right" }}
-                                    className={styles.rowTotal}
-                                >
-                                    $
-                                    {(
-                                        (parseFloat(item.cantidad) || 0) *
-                                        (parseFloat(item.precio) || 0)
-                                    ).toLocaleString()}
-                                </td>
-                                <td
-                                    className={styles.noPrint}
-                                    style={{ textAlign: "center" }}
-                                >
-                                    <button
-                                        tabIndex="-1"
-                                        onClick={() => removeItem(item.id)}
-                                        className={styles.iconBtn}
-                                    >
-                                        ×
-                                    </button>
-                                </td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
+                                                onKeyDown={(e) => {
+                                                    if (e.key === "Enter") {
+                                                        const inputs =
+                                                            document.querySelectorAll(
+                                                                "input",
+                                                            );
+                                                        for (
+                                                            let i = 0;
+                                                            i < inputs.length;
+                                                            i++
+                                                        ) {
+                                                            if (
+                                                                inputs[i] ===
+                                                                    e.target &&
+                                                                inputs[i + 1]
+                                                            ) {
+                                                                inputs[
+                                                                    i + 1
+                                                                ].focus();
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }}
+                                            />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="number"
+                                                className={styles.tableInput}
+                                                placeholder="0.00"
+                                                value={item.precio}
+                                                onChange={(e) =>
+                                                    updateItem(
+                                                        index,
+                                                        "precio",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                onKeyDown={(e) =>
+                                                    handleKeyDownTable(
+                                                        e,
+                                                        index,
+                                                        "precio",
+                                                        item.id,
+                                                    )
+                                                }
+                                            />
+                                        </td>
+                                        <td
+                                            style={{ textAlign: "right" }}
+                                            className={styles.rowTotal}
+                                        >
+                                            $
+                                            {(
+                                                (parseFloat(item.cantidad) ||
+                                                    0) *
+                                                (parseFloat(item.precio) || 0)
+                                            ).toLocaleString()}
+                                        </td>
+                                        <td
+                                            className={styles.noPrint}
+                                            style={{ textAlign: "center" }}
+                                        >
+                                            <button
+                                                tabIndex="-1"
+                                                onClick={() =>
+                                                    removeItem(item.id)
+                                                }
+                                                className={styles.iconBtn}
+                                            >
+                                                ×
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+               </div>
 
-            <div className={styles.actions}>
-                <div className={styles.totalBox}>
-                    <span className={styles.totalLabel}>TOTAL ESTIMADO</span>
-                    <span className={styles.totalAmount}>
-                        ${total.toLocaleString()}
-                    </span>
+                    {/* TOTAL (Pegado abajo) */}
+                    <div className={styles.actions}>
+                        <div className={styles.totalBox}>
+                            <span className={styles.totalLabel}>TOTAL ESTIMADO</span>
+                            <span className={styles.totalAmount}>${total.toLocaleString()}</span>
+                        </div>
+                    </div>
+
                 </div>
-            </div>
+            
 
             {/* MODAL DE AGENDA */}
             {showAgendaModal && (

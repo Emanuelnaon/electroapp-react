@@ -12,7 +12,7 @@ const Cotizador = ({ onBack }) => {
         fecha: new Date().toISOString().split("T")[0],
     });
     const [items, setItems] = useState([
-        { id: 1, descripcion: "", cantidad: 1, precio: "" },
+        { id: 1, descripcion: "", cantidad: 1, precio: "", materiales: "" },
     ]);
     const [misItemsGuardados, setMisItemsGuardados] = useState([]);
     const [clientesGuardados, setClientesGuardados] = useState([]);
@@ -24,7 +24,8 @@ const Cotizador = ({ onBack }) => {
     const [showShareModal, setShowShareModal] = useState(false);
     const [isSaving, setIsSaving] = useState(false); // ✅ AGREGADO
     const itemsRef = useRef([]);
-    const [showAgendaModal, setShowAgendaModal] = useState(false); // ✅ NUEVO ESTADO
+    const [showAgendaModal, setShowAgendaModal] = useState(false);
+    const [sugerenciaResaltada, setSugerenciaResaltada] = useState(-1);
 
     // Cargar los items guardados del usuario al abrir el cotizador
     useEffect(() => {
@@ -133,7 +134,7 @@ const Cotizador = ({ onBack }) => {
                 fecha: new Date().toISOString().split("T")[0],
             });
             setItems([
-                { id: Date.now(), descripcion: "", cantidad: 1, precio: "" },
+                { id: Date.now(), descripcion: "", cantidad: 1, precio: "", materiales: "" },
             ]);
             toast.success("Campos limpios ✨");
 
@@ -154,6 +155,7 @@ const Cotizador = ({ onBack }) => {
             descripcion: "",
             cantidad: 1,
             precio: "",
+             materiales: "",
         };
         setItems((prev) => [...prev, newItem]);
         setTimeout(() => {
@@ -192,9 +194,11 @@ const Cotizador = ({ onBack }) => {
                 );
                 setSugerencias(filtrados);
                 setFilaActivaSugerencia(index);
+                setSugerenciaResaltada(-1);
             } else {
                 setSugerencias([]);
                 setFilaActivaSugerencia(null);
+                setSugerenciaResaltada(-1);
             }
         }
     };
@@ -216,6 +220,7 @@ const Cotizador = ({ onBack }) => {
         // Cerramos el menú flotante
         setSugerencias([]);
         setFilaActivaSugerencia(null);
+        setSugerenciaResaltada(-1);
     };
 
     // --- LÓGICA AUTOCOMPLETADO DE CLIENTES ---
@@ -247,12 +252,12 @@ const Cotizador = ({ onBack }) => {
         toast.success(`Datos de ${clienteSeleccionado.nombre} cargados`);
     };
 
-    // Calcular Total
+    // Calcular Total (Suma Precio Unitario + Materiales, multiplicado por la Cantidad)
     const total = items.reduce((acc, item) => {
-        return (
-            acc +
-            (parseFloat(item.cantidad) || 0) * (parseFloat(item.precio) || 0)
-        );
+        const cant = parseFloat(item.cantidad) || 0;
+        const precioManoObra = parseFloat(item.precio) || 0;
+        const precioMateriales = parseFloat(item.materiales) || 0;
+        return acc + cant * (precioManoObra + precioMateriales);
     }, 0);
 
     // Imprimir
@@ -309,27 +314,63 @@ const Cotizador = ({ onBack }) => {
         setShowShareModal(false);
     };
 
-    const handleKeyDownTable = (e, index, field, id) => {
-        // Si presiona Enter, evitamos que haga un salto de línea raro
-        // y si está en la columna "precio", agregamos una fila nueva abajo.
-        if (e.key === "Enter") {
-            e.preventDefault();
-            if (field === "precio") {
-                addItem();
-            }
-        }
+ const handleKeyDownTable = (e, index, field, id) => {
+     // --- 1. LÓGICA DE NAVEGACIÓN EN EL MENÚ DESPLEGABLE ---
+     if (
+         field === "descripcion" &&
+         filaActivaSugerencia === index &&
+         sugerencias.length > 0
+     ) {
+         if (e.key === "ArrowDown") {
+             e.preventDefault(); // Evita que el cursor se mueva dentro del input
+             setSugerenciaResaltada((prev) =>
+                 prev < sugerencias.length - 1 ? prev + 1 : prev,
+             );
+             return;
+         }
+         if (e.key === "ArrowUp") {
+             e.preventDefault();
+             setSugerenciaResaltada((prev) => (prev > 0 ? prev - 1 : -1));
+             return;
+         }
+         if (e.key === "Enter" && sugerenciaResaltada >= 0) {
+             e.preventDefault();
+             // Si presionó Enter y tenía una sugerencia marcada, la selecciona
+             seleccionarSugerencia(index, sugerencias[sugerenciaResaltada]);
+             return;
+         }
+     }
 
-        // ¡ELIMINAMOS la lógica del Backspace!
-        // Ahora borrar solo borrará texto, y la única forma de eliminar
-        // la fila completa será haciendo clic en la "X".
-    };
+     // --- 2. LÓGICA NORMAL (Pasar a la siguiente celda o crear fila) ---
+     if (e.key === "Enter") {
+         e.preventDefault();
+
+         // Si apretó Enter pero no usó las flechas, cerramos el menú que haya quedado abierto
+         if (filaActivaSugerencia === index) {
+             setSugerencias([]);
+             setFilaActivaSugerencia(null);
+         }
+
+         if (field === "materiales") {
+             addItem();
+         } else {
+             const inputs = document.querySelectorAll("input");
+             for (let i = 0; i < inputs.length; i++) {
+                 if (inputs[i] === e.target && inputs[i + 1]) {
+                     inputs[i + 1].focus();
+                     break;
+                 }
+             }
+         }
+     }
+ };
 
     // 3. USE EFFECT
     useEffect(() => {
         const handleGlobalKeys = (e) => {
             if (e.key === "Escape") {
                 if (showShareModal) setShowShareModal(false);
-                    else if (showAgendaModal) setShowAgendaModal(false);
+                else if (showAgendaModal) setShowAgendaModal(false);
                 else {
                     onBack?.();
                 }
@@ -368,11 +409,9 @@ const Cotizador = ({ onBack }) => {
     // 4. RENDERIZADO (JSX)
     return (
         <div className={styles.container}>
-            {/* --- LAYOUT DIVIDIDO --- */}
+            {/* --- LAYOUT DIVIDIDO DEFINITIVO --- */}
             <div className={styles.splitLayout}>
-                {/* ==========================================
-                    HOJA IZQUIERDA: PANEL DE CONTROL
-                ========================================== */}
+                {/* === PANEL IZQUIERDO (HERRAMIENTAS) === */}
                 <div className={styles.leftPanel}>
                     {/* ENCABEZADO Y LOGO */}
                     <div className={styles.documentHeader}>
@@ -505,7 +544,6 @@ const Cotizador = ({ onBack }) => {
                                 Imprimir
                             </span>
                         </div>
-
                         <div className={styles.buttonsContainer}>
                             <button
                                 onClick={handleSaveQuote}
@@ -537,59 +575,207 @@ const Cotizador = ({ onBack }) => {
                     </div>
                 </div>
 
-                {/* ==========================================
-                    HOJA DERECHA: LA LISTA DE PRECIOS
-                ========================================== */}
+                {/* === PANEL DERECHO (LIENZO DE PRECIOS) === */}
                 <div className={styles.rightPanel}>
-                    {/* TABLA DE ITEMS */}
-                    <table className={styles.itemsTable}>
-                        <thead>
-                            <tr>
-                                <th style={{ width: "55%" }}>Descripción</th>
-                                <th style={{ width: "10%" }}>Cant.</th>
-                                <th style={{ width: "15%" }}>Precio Unit.</th>
-                                <th
-                                    style={{ width: "15%", textAlign: "right" }}
-                                >
-                                    Subtotal
-                                </th>
-                                <th
-                                    className={styles.noPrint}
-                                    style={{ width: "5%" }}
-                                ></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {items.map((item, index) => {
-                                const isEmpty =
-                                    !item.descripcion && !item.precio;
-                                return (
-                                    <tr
-                                        key={item.id}
-                                        className={
-                                            isEmpty
-                                                ? styles.hideWhenPrinting
-                                                : ""
-                                        }
+                    {/* TOTAL FIJO ARRIBA */}
+                    <div className={styles.totalBoxSticky}>
+                        <span className={styles.totalLabel}>
+                            TOTAL ESTIMADO
+                        </span>
+                        <span className={styles.totalAmount}>
+                            ${total.toLocaleString()}
+                        </span>
+                    </div>
+
+                    {/* TABLA CON SCROLL INTERNO */}
+                    <div className={styles.tableWrapper}>
+                        <table className={styles.itemsTable}>
+                            <thead>
+                                <tr>
+                                    <th style={{ width: "40%" }}>
+                                        Descripción
+                                    </th>
+                                    <th
+                                        style={{
+                                            width: "10%",
+                                            textAlign: "center",
+                                        }}
                                     >
-                                        <td className={styles.td}>
-                                            <div
-                                                className={styles.inputWrapper}
-                                            >
-                                                <input
-                                                    ref={(el) =>
-                                                        (itemsRef.current[
-                                                            index
-                                                        ] = el)
+                                        Cant.
+                                    </th>
+                                    <th
+                                        style={{
+                                            width: "15%",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        Precio M. Obra
+                                    </th>
+                                    <th
+                                        style={{
+                                            width: "15%",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        Est. Materiales
+                                    </th>
+                                    <th
+                                        style={{
+                                            width: "15%",
+                                            textAlign: "right",
+                                        }}
+                                    >
+                                        Subtotal
+                                    </th>
+                                    <th
+                                        className={styles.noPrint}
+                                        style={{ width: "5%" }}
+                                    ></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {items.map((item, index) => {
+                                    const isEmpty =
+                                        !item.descripcion &&
+                                        !item.precio &&
+                                        !item.materiales;
+                                    const subtotalRow =
+                                        (parseFloat(item.cantidad) || 0) *
+                                        ((parseFloat(item.precio) || 0) +
+                                            (parseFloat(item.materiales) || 0));
+
+                                    return (
+                                        <tr
+                                            key={item.id}
+                                            className={
+                                                isEmpty
+                                                    ? styles.hideWhenPrinting
+                                                    : ""
+                                            }
+                                        >
+                                            <td className={styles.td}>
+                                                <div
+                                                    className={
+                                                        styles.inputWrapper
                                                     }
-                                                    className={styles.input}
-                                                    type="text"
-                                                    placeholder="Ej: Instalación de toma..."
-                                                    value={item.descripcion}
+                                                >
+                                                    <input
+                                                        ref={(el) =>
+                                                            (itemsRef.current[
+                                                                index
+                                                            ] = el)
+                                                        }
+                                                        className={styles.input}
+                                                        type="text"
+                                                        placeholder="Ej: Instalación de toma..."
+                                                        value={item.descripcion}
+                                                        onChange={(e) =>
+                                                            updateItem(
+                                                                index,
+                                                                "descripcion",
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        onKeyDown={(e) =>
+                                                            handleKeyDownTable(
+                                                                e,
+                                                                index,
+                                                                "descripcion",
+                                                                item.id,
+                                                            )
+                                                        }
+                                                        onBlur={() =>
+                                                            setTimeout(
+                                                                () =>
+                                                                    setFilaActivaSugerencia(
+                                                                        null,
+                                                                    ),
+                                                                200,
+                                                            )
+                                                        }
+                                                    />
+                                                    {/* MENÚ DE SUGERENCIAS */}
+                                                    {filaActivaSugerencia ===
+                                                        index &&
+                                                        sugerencias.length >
+                                                            0 && (
+                                                            <ul
+                                                                className={
+                                                                    styles.suggestionsList
+                                                                }
+                                                            >
+                                                                {sugerencias.map(
+                                                                    (
+                                                                        sug,
+                                                                        sugIndex,
+                                                                    ) => (
+                                                                        <li
+                                                                            key={
+                                                                                sug.id
+                                                                            }
+                                                                            onClick={() =>
+                                                                                seleccionarSugerencia(
+                                                                                    index,
+                                                                                    sug,
+                                                                                )
+                                                                            }
+                                                                            className={`${styles.suggestionItem} ${sugerenciaResaltada === sugIndex ? styles.suggestionItemActive : ""}`}
+                                                                        >
+                                                                            <span
+                                                                                className={
+                                                                                    styles.sugNombre
+                                                                                }
+                                                                            >
+                                                                                {
+                                                                                    sug.nombre
+                                                                                }
+                                                                            </span>
+                                                                            <span
+                                                                                className={
+                                                                                    styles.sugPrecio
+                                                                                }
+                                                                            >
+                                                                                $
+                                                                                {sug.precio.toLocaleString()}
+                                                                            </span>
+                                                                        </li>
+                                                                    ),
+                                                                )}
+                                                            </ul>
+                                                        )}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    className={
+                                                        styles.tableInput
+                                                    }
+                                                    style={{
+                                                        textAlign: "center",
+                                                    }}
+                                                    value={item.cantidad}
                                                     onChange={(e) =>
                                                         updateItem(
                                                             index,
-                                                            "descripcion",
+                                                            "cantidad",
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    className={
+                                                        styles.tableInput
+                                                    }
+                                                    placeholder="0.00"
+                                                    value={item.precio}
+                                                    onChange={(e) =>
+                                                        updateItem(
+                                                            index,
+                                                            "precio",
                                                             e.target.value,
                                                         )
                                                     }
@@ -597,174 +783,72 @@ const Cotizador = ({ onBack }) => {
                                                         handleKeyDownTable(
                                                             e,
                                                             index,
-                                                            "descripcion",
+                                                            "precio",
                                                             item.id,
                                                         )
                                                     }
-                                                    // Retrasamos el cierre para que dé tiempo de hacer clic
-                                                    onBlur={() =>
-                                                        setTimeout(
-                                                            () =>
-                                                                setFilaActivaSugerencia(
-                                                                    null,
-                                                                ),
-                                                            200,
+                                                />
+                                            </td>
+                                            {/* NUEVA COLUMNA MATERIALES */}
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    className={
+                                                        styles.tableInput
+                                                    }
+                                                    placeholder="0.00"
+                                                    value={
+                                                        item.materiales || ""
+                                                    }
+                                                    onChange={(e) =>
+                                                        updateItem(
+                                                            index,
+                                                            "materiales",
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    onKeyDown={(e) =>
+                                                        handleKeyDownTable(
+                                                            e,
+                                                            index,
+                                                            "materiales",
+                                                            item.id,
                                                         )
                                                     }
                                                 />
-
-                                                {/* MENÚ DESPLEGABLE DE SUGERENCIAS */}
-                                                {filaActivaSugerencia ===
-                                                    index &&
-                                                    sugerencias.length > 0 && (
-                                                        <ul
-                                                            className={
-                                                                styles.suggestionsList
-                                                            }
-                                                        >
-                                                            {sugerencias.map(
-                                                                (sug) => (
-                                                                    <li
-                                                                        key={
-                                                                            sug.id
-                                                                        }
-                                                                        onClick={() =>
-                                                                            seleccionarSugerencia(
-                                                                                index,
-                                                                                sug,
-                                                                            )
-                                                                        }
-                                                                        className={
-                                                                            styles.suggestionItem
-                                                                        }
-                                                                    >
-                                                                        <span
-                                                                            className={
-                                                                                styles.sugNombre
-                                                                            }
-                                                                        >
-                                                                            {
-                                                                                sug.nombre
-                                                                            }
-                                                                        </span>
-                                                                        <span
-                                                                            className={
-                                                                                styles.sugPrecio
-                                                                            }
-                                                                        >
-                                                                            $
-                                                                            {sug.precio.toLocaleString()}
-                                                                        </span>
-                                                                    </li>
-                                                                ),
-                                                            )}
-                                                        </ul>
-                                                    )}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <input
-                                                type="number"
-                                                className={styles.tableInput}
-                                                value={item.cantidad}
-                                                onChange={(e) =>
-                                                    updateItem(
-                                                        index,
-                                                        "cantidad",
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                onKeyDown={(e) => {
-                                                    if (e.key === "Enter") {
-                                                        const inputs =
-                                                            document.querySelectorAll(
-                                                                "input",
-                                                            );
-                                                        for (
-                                                            let i = 0;
-                                                            i < inputs.length;
-                                                            i++
-                                                        ) {
-                                                            if (
-                                                                inputs[i] ===
-                                                                    e.target &&
-                                                                inputs[i + 1]
-                                                            ) {
-                                                                inputs[
-                                                                    i + 1
-                                                                ].focus();
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
+                                            </td>
+                                            <td
+                                                style={{
+                                                    textAlign: "right",
+                                                    fontWeight: "bold",
                                                 }}
-                                            />
-                                        </td>
-                                        <td>
-                                            <input
-                                                type="number"
-                                                className={styles.tableInput}
-                                                placeholder="0.00"
-                                                value={item.precio}
-                                                onChange={(e) =>
-                                                    updateItem(
-                                                        index,
-                                                        "precio",
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                onKeyDown={(e) =>
-                                                    handleKeyDownTable(
-                                                        e,
-                                                        index,
-                                                        "precio",
-                                                        item.id,
-                                                    )
-                                                }
-                                            />
-                                        </td>
-                                        <td
-                                            style={{ textAlign: "right" }}
-                                            className={styles.rowTotal}
-                                        >
-                                            $
-                                            {(
-                                                (parseFloat(item.cantidad) ||
-                                                    0) *
-                                                (parseFloat(item.precio) || 0)
-                                            ).toLocaleString()}
-                                        </td>
-                                        <td
-                                            className={styles.noPrint}
-                                            style={{ textAlign: "center" }}
-                                        >
-                                            <button
-                                                tabIndex="-1"
-                                                onClick={() =>
-                                                    removeItem(item.id)
-                                                }
-                                                className={styles.iconBtn}
+                                                className={styles.rowTotal}
                                             >
-                                                ×
-                                            </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-               </div>
-
-                    {/* TOTAL (Pegado abajo) */}
-                    <div className={styles.actions}>
-                        <div className={styles.totalBox}>
-                            <span className={styles.totalLabel}>TOTAL ESTIMADO</span>
-                            <span className={styles.totalAmount}>${total.toLocaleString()}</span>
-                        </div>
+                                                ${subtotalRow.toLocaleString()}
+                                            </td>
+                                            <td
+                                                className={styles.noPrint}
+                                                style={{ textAlign: "center" }}
+                                            >
+                                                <button
+                                                    tabIndex="-1"
+                                                    onClick={() =>
+                                                        removeItem(item.id)
+                                                    }
+                                                    className={styles.iconBtn}
+                                                >
+                                                    ×
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
                     </div>
-
                 </div>
-            
+            </div>
+            {/* --- FIN LAYOUT DIVIDIDO --- */}
 
             {/* MODAL DE AGENDA */}
             {showAgendaModal && (
@@ -858,6 +942,6 @@ const Cotizador = ({ onBack }) => {
             )}
         </div>
     );
-};;
+};;;
 
 export default Cotizador;

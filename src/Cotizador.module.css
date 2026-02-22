@@ -35,10 +35,13 @@
    font-size: 0.8rem;
    color: #9ca3af;
    background: #f3f4f6;
-   padding: 5px 10px;
+   padding: 10px;
    border-radius: 4px;
    display: flex;
-   gap: 15px;
+   flex-wrap: wrap;
+   /* Si los atajos no entran, bajan a la siguiente línea */
+   justify-content: center;
+   gap: 10px;
 }
 
 .key {
@@ -52,14 +55,14 @@
 
 /* CLIENTE - GRID HORIZONTAL */
 .clientSection {
-   display: grid;
-   grid-template-columns: 2fr 1fr 1fr;
-   gap: 20px;
+   display: flex;
+   flex-direction: column;
+   /* Fuerza a los inputs a ir uno debajo del otro */
+   gap: 15px;
    background-color: #f9fafb;
    padding: 20px;
    border-radius: 8px;
    border: 1px solid #e5e7eb;
-   margin-bottom: 30px;
 }
 
 .inputGroup {
@@ -475,8 +478,11 @@
 
 /* Clase nueva para los botones (en escritorio se ven en fila) */
 .buttonsContainer {
-   display: flex;
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   /* Ordena los botones en una cuadrícula de 2x2 */
    gap: 10px;
+   width: 100%;
 }
 
 /* =========================================
@@ -609,7 +615,11 @@
 }
 
 /* 2. Paneles internos (Cliente y Barra de herramientas) */
-:global(body[data-theme='dark']) .clientSection,
+:global(body[data-theme='dark']) .clientSection {
+   background-color: rgba(0, 0, 0, 0.2);
+   border-color: rgba(255, 255, 255, 0.2);
+}
+
 :global(body[data-theme='dark']) .toolbar {
    background-color: rgba(0, 0, 0, 0.2);
    /* Un poco más oscuro para separar */
@@ -712,7 +722,12 @@
    background-color: #ebf8ff;
    /* Azul muy clarito */
 }
-
+/* Color cuando pasas con las flechas del teclado */
+.suggestionItemActive {
+   background-color: #ebf8ff;
+   border-left: 4px solid #3182ce;
+   /* Una barrita azul para que quede más claro aún */
+}
 .sugNombre {
    font-size: 0.9rem;
    color: #2d3748;
@@ -724,7 +739,11 @@
    color: #48bb78;
    font-weight: bold;
 }
-
+/* Modo oscuro para la selección con teclado */
+:global(body[data-theme='dark']) .suggestionItemActive {
+   background-color: #374151;
+   border-left: 4px solid #63b3ed;
+}
 /* Modo oscuro para sugerencias */
 :global(body[data-theme='dark']) .suggestionsList {
    background: #1f2937;
@@ -890,58 +909,113 @@
 }
 
 /* =========================================
-   LAYOUT DEFINITIVO (IZQ: Control / DER: Lista)
+   LAYOUT DEFINITIVO (IZQ: Control / DER: Lista Scroleable)
 ========================================= */
-/* El contenedor principal vuelve a ocupar todo el espacio disponible sin fondos raros */
+
 .container {
    width: 100%;
-   max-width: 1600px;
+   max-width: 1800px;
    margin: 0 auto;
    padding: 20px;
-   font-family: 'Inter', system-ui, sans-serif;
+   /* Altura total de la ventana menos un margen para el nav superior */
+   height: calc(100vh - 100px);
+   display: flex;
+   flex-direction: column;
 }
 
 .splitLayout {
    display: flex;
    gap: 30px;
-   align-items: stretch;
-   /* Hace que ambas hojas tengan la misma altura mínima */
+   flex: 1;
+   min-height: 0;
+   /* MAGIA CSS: Permite que los hijos hagan scroll internamente */
 }
 
 /* HOJA IZQUIERDA (Control) */
 .leftPanel {
-   flex: 0 0 400px;
-   /* Ancho fijo para los controles */
+   flex: 0 0 420px;
+   /* Ancho fijo como en tu captura */
    display: flex;
    flex-direction: column;
    gap: 20px;
+   overflow-y: auto;
+   /* Por si en una netbook la pantalla es muy baja */
+   padding-right: 5px;
 }
 
 /* HOJA DERECHA (Lista y Total) */
 .rightPanel {
    flex: 1;
-   /* Ocupa todo el resto del espacio derecho */
-   background: white;
-   padding: 30px;
-   border-radius: 12px;
-   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
    display: flex;
    flex-direction: column;
-   justify-content: space-between;
-   /* Empuja el Total hacia abajo */
-   min-height: 70vh;
-   /* Altura mínima para que se vea como una hoja grande */
+   background: white;
+   border-radius: 12px;
+   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+   overflow: hidden;
+   /* Corta lo que sobra para que nazca el scroll interno */
 }
 
-.tableContainer {
-   width: 100%;
-   overflow-x: auto;
-   /* Por si la tabla es muy ancha, evita desbordes */
+/* LA BARRA NEGRA DEL TOTAL (FIJA ARRIBA) */
+.totalBoxSticky {
+   background-color: #131517;
+   color: #FFD700;
+   padding: 20px 40px;
+   display: flex;
+   justify-content: flex-end;
+   align-items: center;
+   gap: 20px;
+   flex-shrink: 0;
+   /* Impide que esta caja se achique al hacer scroll */
+   z-index: 10;
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Ajustes del modo oscuro para el nuevo contenedor derecho */
+.totalLabel {
+   font-size: 16px;
+   opacity: 0.9;
+   font-weight: 600;
+   letter-spacing: 1px;
+}
+
+.totalAmount {
+   font-size: 38px;
+   font-weight: 900;
+   margin: 0;
+}
+
+/* CONTENEDOR DE LA TABLA (EL QUE HACE SCROLL) */
+.tableWrapper {
+   flex: 1;
+   overflow-y: auto;
+   /* Aquí nace el scroll bar si la lista es larga */
+   padding: 20px 30px;
+}
+
+/* Modo oscuro */
 :global(body[data-theme='dark']) .rightPanel {
    background-color: #1a202c;
-   /* Fondo oscuro de la hoja */
    border: 1px solid #2d3748;
+}
+/* --- RESPONSIVE AUTOMÁTICO --- */
+@media (max-width: 1100px) {
+   .splitLayout {
+      flex-direction: column;
+      /* Pasa el panel de control arriba y la lista abajo */
+   }
+
+   .leftPanel {
+      flex: none;
+      width: 100%;
+      /* Toma todo el ancho disponible */
+   }
+
+   .container {
+      height: auto;
+      /* Quita el bloqueo de altura para que baje normal */
+   }
+
+   .rightPanel {
+      overflow: visible;
+      /* Elimina el doble scroll en pantallas chicas */
+   }
 }

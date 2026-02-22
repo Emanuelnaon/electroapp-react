@@ -27,7 +27,7 @@ const Cotizador = ({ onBack }) => {
     const [showAgendaModal, setShowAgendaModal] = useState(false);
     const [sugerenciaResaltada, setSugerenciaResaltada] = useState(-1);
 
-    // Cargar los items guardados del usuario al abrir el cotizador
+    // Cargar los items guardados al abrir el cotizador
     useEffect(() => {
         const cargarDatos = async () => {
             const {
@@ -35,14 +35,25 @@ const Cotizador = ({ onBack }) => {
             } = await supabase.auth.getUser();
             if (!user) return;
 
-            // Cargar Items
-            const { data: itemsData } = await supabase
+            // 1. CARGAR CATÁLOGO OFICIAL (Para todos - Solo lectura) 📖
+            const { data: oficialesData } = await supabase
+                .from("precios_oficiales")
+                .select("*");
+
+            // 2. CARGAR ÍTEMS PERSONALIZADOS DEL USUARIO (Privados) 🔒
+            const { data: misItemsData } = await supabase
                 .from("mis_items")
                 .select("*")
                 .eq("user_id", user.id);
-            if (itemsData) setMisItemsGuardados(itemsData);
 
-            // Cargar Clientes
+            // 3. FUSIONAR AMBAS LISTAS PARA EL BUSCADOR 🤝
+            const catalogoCompleto = [
+                ...(oficialesData || []),
+                ...(misItemsData || []),
+            ];
+            setMisItemsGuardados(catalogoCompleto);
+
+            // 4. Cargar Clientes (Privados)
             const { data: clientesData } = await supabase
                 .from("clientes")
                 .select("*")
@@ -967,6 +978,6 @@ const Cotizador = ({ onBack }) => {
             )}
         </div>
     );
-};
+};;;
 
 export default Cotizador;

@@ -476,9 +476,10 @@ const Cotizador = ({ onBack }) => {
                                             {sugerenciasClientes.map((c) => (
                                                 <li
                                                     key={c.id}
-                                                    onClick={() =>
-                                                        seleccionarCliente(c)
-                                                    }
+                                                    onMouseDown={(e) => {
+                                                        e.preventDefault();
+                                                        seleccionarCliente(c);
+                                                    }}
                                                     className={
                                                         styles.suggestionItem
                                                     }
@@ -666,9 +667,10 @@ const Cotizador = ({ onBack }) => {
                                             }
                                         >
                                             <td className={styles.td}>
+                                                {/* Usamos la nueva clase aquí */}
                                                 <div
                                                     className={
-                                                        styles.inputWrapper
+                                                        styles.tableInputWrapper
                                                     }
                                                 >
                                                     <input
@@ -706,7 +708,8 @@ const Cotizador = ({ onBack }) => {
                                                             )
                                                         }
                                                     />
-                                                    {/* MENÚ DE SUGERENCIAS */}
+
+                                                    {/* MENÚ DE SUGERENCIAS DE ÍTEMS */}
                                                     {filaActivaSugerencia ===
                                                         index &&
                                                         sugerencias.length >
@@ -725,12 +728,15 @@ const Cotizador = ({ onBack }) => {
                                                                             key={
                                                                                 sug.id
                                                                             }
-                                                                            onClick={() =>
+                                                                            onMouseDown={(
+                                                                                e,
+                                                                            ) => {
+                                                                                e.preventDefault();
                                                                                 seleccionarSugerencia(
                                                                                     index,
                                                                                     sug,
-                                                                                )
-                                                                            }
+                                                                                );
+                                                                            }}
                                                                             className={`${styles.suggestionItem} ${sugerenciaResaltada === sugIndex ? styles.suggestionItemActive : ""}`}
                                                                         >
                                                                             <span
@@ -857,12 +863,13 @@ const Cotizador = ({ onBack }) => {
                                 })}
                             </tbody>
                         </table>
-                        <div className={`${styles.tableFooter} ${styles.noPrint}`}>
+                        <div
+                            className={`${styles.tableFooter} ${styles.noPrint}`}
+                        >
                             <button onClick={addItem} className={styles.addBtn}>
                                 + Agregar Fila
                             </button>
                         </div>
-
                     </div>
                 </div>
             </div>

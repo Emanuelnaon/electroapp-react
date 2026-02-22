@@ -362,6 +362,14 @@
    width: 100%;
 }
 
+/* 🔥 NUEVO: Wrapper exclusivo para los ítems de la tabla */
+.tableInputWrapper {
+   position: relative;
+   width: 100%;
+   z-index: 100;
+   /* Asegura que el menú flote por encima de las filas de abajo */
+}
+
 .suggestionsList {
    position: absolute;
    top: 100%;
